@@ -53,7 +53,7 @@ const heroDates = firstWeek ? matchDatesOf(firstWeek.matches) : [];
         <p class="label">Klub</p>
         <h2>Naše ekipe</h2>
       </div>
-      <p class="week__dates"><a href={href('/ekipe')}>Sve ekipe</a></p>
+      <a class="more more--small" href={href('/ekipe')}>Sve ekipe</a>
     </header>
     <div class="team-grid">{teams.map((team) => <TeamSummary team={team} />)}</div>
   </section>

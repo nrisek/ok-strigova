@@ -10,32 +10,33 @@ const { team } = Astro.props;
 const competitions = team.competitionIds.map(competitionFor).filter((c): c is Competition => c !== undefined);
 const league = competitions.map((c) => ({ c, standing: standingOf(team, c) })).find((e) => e.standing !== null);
 const row = league?.standing?.row;
+const description = [
+  team.category,
+  league ? competitionShortName(league.c) : null,
+  league?.standing?.group.name ? `skupina ${league.standing.group.name}` : null,
+]
+  .filter(Boolean)
+  .join(', ');
 ---
 
-<article class="team-summary" style={`--team:${teamColor(team)}`}>
-  <div class="team-summary__main">
-    <h3><a href={href(`/ekipe/${team.slug}`)}>{teamLabel(team)}</a></h3>
-    <p class="team-summary__comp">
-      {
-        [team.category, league ? competitionShortName(league.c) : null, league?.standing?.group.name ? `skupina ${league.standing.group.name}` : null]
-          .filter(Boolean)
-          .join(', ')
-      }
-    </p>
-    <p class="team-summary__stats">
+<a class="team-summary" href={href(`/ekipe/${team.slug}`)} style={`--team:${teamColor(team)}`}>
+  <span class="team-summary__main">
+    <span class="team-summary__name">{teamLabel(team)}</span>
+    <span class="team-summary__comp">{description}</span>
+    <span class="team-summary__stats">
       {
         row
           ? `${plural(row.points, 'bod', 'boda', 'bodova')} iz ${plural(row.played, 'utakmice', 'utakmice', 'utakmica')}, ${plural(row.won, 'pobjeda', 'pobjede', 'pobjeda')} i ${plural(row.lost, 'poraz', 'poraza', 'poraza')}`
           : 'Natjecanje nema tablicu poretka.'
       }
-    </p>
-  </div>
+    </span>
+  </span>
   {
     league && row && (
-      <p class="team-summary__rank" aria-label={`${row.rank}. mjesto od ${league.standing!.group.standings.length}`}>
+      <span class="team-summary__rank" aria-label={`${row.rank}. mjesto od ${league.standing!.group.standings.length}`}>
         <span class="team-summary__rank-num num">{row.rank}.</span>
         <span class="team-summary__rank-of">od {league.standing!.group.standings.length}</span>
-      </p>
+      </span>
     )
   }
-</article>
+</a>

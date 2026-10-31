@@ -254,13 +254,36 @@ h3 {
 }
 
 .more {
-  display: inline-block;
-  margin-top: 16px;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 18px;
+  padding: 13px 22px 12px;
+  border-radius: 6px;
+  background: var(--orange);
+  color: var(--navy);
   font-family: var(--font-sport);
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 0.9rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  font-size: 0.85rem;
+  text-decoration: none;
+  transition: background-color 120ms ease, transform 120ms ease;
+}
+
+.more:hover {
+  background: var(--cream);
+  color: var(--navy);
+}
+
+.more:active {
+  transform: translateY(1px);
+}
+
+.more--small {
+  margin-top: 0;
+  margin-bottom: 8px;
+  padding: 9px 16px 8px;
+  font-size: 0.8rem;
 }
 
 .empty {
@@ -627,38 +650,51 @@ h3 {
   border-radius: var(--radius);
   border-left: 6px solid var(--team, var(--orange));
   padding: 14px 18px 14px 16px;
+  text-decoration: none;
+  transition: transform 120ms ease, box-shadow 120ms ease;
 }
 
-.team-summary h3 {
+.team-summary:hover {
+  color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.6);
+}
+
+.team-summary__main {
+  display: block;
+}
+
+.team-summary__name {
+  display: block;
   font-family: var(--font-sport);
   font-weight: 600;
   font-size: 1.2rem;
   text-transform: uppercase;
   letter-spacing: 0.01em;
-}
-
-.team-summary h3 a {
   color: var(--team, var(--ink));
-  text-decoration: none;
 }
 
-.team-summary h3 a:hover {
+.team-summary:hover .team-summary__name {
   text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .team-summary__comp {
+  display: block;
   color: var(--ink-soft);
   font-size: 0.88rem;
   margin-top: 2px;
 }
 
 .team-summary__stats {
+  display: block;
   color: var(--ink-soft);
   font-size: 0.88rem;
   margin-top: 6px;
 }
 
 .team-summary__rank {
+  display: block;
   text-align: right;
   line-height: 1;
   flex-shrink: 0;
