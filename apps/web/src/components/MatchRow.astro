@@ -1,0 +1,80 @@
+---
+import type { Match } from '@ok-strigova/scraper/model';
+import { clubOutcome, clubTeamsOf, competitionFor, competitionShortName, href, isUpcoming, teamShort } from '../lib/data';
+import { formatDay, formatRange, formatResult, formatSets, formatTime } from '../lib/format';
+
+interface Props {
+  match: Match;
+  showTeam?: boolean;
+  showCompetition?: boolean;
+}
+
+const { match: m, showTeam = false, showCompetition = false } = Astro.props;
+
+const outcome = clubOutcome(m);
+const upcoming = isUpcoming(m);
+const result = formatResult(m);
+const time = m.scheduledAt ? formatTime(m.scheduledAt) : null;
+const whenDate = m.scheduledAt ? formatDay(m.scheduledAt) : formatRange(m.roundDates);
+const whenNote = m.status === 'postponed' ? 'odgođeno' : m.status === 'tbd' ? 'termin nije određen' : null;
+const competition = competitionFor(m.competitionId);
+const clubTeams = clubTeamsOf(m);
+const isBye = m.status === 'bye';
+const byeTeam = m.home === '0' ? m.away : m.home;
+---
+
+<li
+  class:list={[
+    'match',
+    {
+      'match--win': outcome === 'win',
+      'match--loss': outcome === 'loss',
+      'match--upcoming': upcoming,
+      'match--bye': isBye,
+    },
+  ]}
+>
+  <div class="match__when">
+    {m.scheduledAt ? <time datetime={m.scheduledAt}>{whenDate}</time> : <span>{whenDate || (m.status === 'played' ? 'odigrano' : 'datum nije poznat')}</span>}
+    {whenNote && <span>{whenNote}</span>}
+  </div>
+
+  {
+    isBye ? (
+      <div class="match__teams match__teams--bye">
+        <span class="match__team is-club">{byeTeam}</span>
+        <span class="match__free">slobodno kolo</span>
+      </div>
+    ) : (
+      <div class="match__teams">
+        <span class:list={['match__team', { 'is-club': m.clubTeams.includes(m.home) }]}>{m.home}</span>
+        <span class:list={['match__score', { 'match__score--time': !result && !!time, 'match__score--pending': !result && !time }]}>
+          {result ?? time ?? '–'}
+        </span>
+        <span class:list={['match__team', 'match__team--away', { 'is-club': m.clubTeams.includes(m.away) }]}>
+          {m.away}
+        </span>
+      </div>
+    )
+  }
+
+  {
+    (m.sets.length > 0 || m.venue || (showCompetition && competition) || (showTeam && clubTeams.length > 0)) && (
+      <div class="match__meta">
+        {m.sets.length > 0 && <span class="num">{formatSets(m.sets)}</span>}
+        {m.venue && <span>{m.venue}</span>}
+        {showCompetition && competition && (
+          <a href={href(`/natjecanja/${competition.id}`)}>
+            {competitionShortName(competition) + (m.round ? `, ${m.round}. kolo` : '')}
+          </a>
+        )}
+        {showTeam &&
+          clubTeams.map((t) => (
+            <a class="chip" href={href(`/ekipe/${t.slug}`)}>
+              {teamShort(t)}
+            </a>
+          ))}
+      </div>
+    )
+  }
+</li>

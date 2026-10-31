@@ -1,0 +1,13 @@
+---
+import Base from '../../layouts/Base.astro';
+import TeamSummary from '../../components/TeamSummary.astro';
+import { teams } from '../../lib/data';
+---
+
+<Base title="Ekipe">
+  <div class="page-head">
+    <h1>Ekipe</h1>
+    <p>Sve ekipe kluba koje se natječu ove sezone, s trenutnim mjestom u svojoj ligi.</p>
+  </div>
+  <div class="team-list">{teams.map((team) => <TeamSummary team={team} />)}</div>
+</Base>

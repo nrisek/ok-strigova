@@ -1,0 +1,62 @@
+---
+import type { Competition, Match } from '@ok-strigova/scraper/model';
+import Base from '../../layouts/Base.astro';
+import MatchList from '../../components/MatchList.astro';
+import Standings from '../../components/Standings.astro';
+import { competitionShortName, competitions, matches } from '../../lib/data';
+import { formatRange } from '../../lib/format';
+
+export function getStaticPaths() {
+  return competitions.map((c) => ({ params: { id: c.id }, props: { competition: c } }));
+}
+
+interface Props {
+  competition: Competition;
+}
+
+const { competition: c } = Astro.props;
+const all = matches.filter((m) => m.competitionId === c.id);
+const groupNames = c.groups.length > 0 ? c.groups.map((g) => g.name) : [null];
+
+function byRound(list: Match[]): { round: number | null; dates: string[]; matches: Match[] }[] {
+  const map = new Map<number | null, { round: number | null; dates: string[]; matches: Match[] }>();
+  for (const m of list) {
+    const entry = map.get(m.round) ?? { round: m.round, dates: m.roundDates, matches: [] };
+    entry.matches.push(m);
+    map.set(m.round, entry);
+  }
+  return [...map.values()].sort((a, b) => (a.round ?? 0) - (b.round ?? 0));
+}
+---
+
+<Base title={competitionShortName(c)}>
+  <div class="page-head">
+    <h1>{competitionShortName(c)}</h1>
+    <p>{c.category}. Naše ekipe: {c.clubTeams.join(', ')}.</p>
+    <div class="meta-list">
+      <span><a href={c.url}>Natjecanje na stranici saveza</a></span>
+    </div>
+  </div>
+
+  {
+    groupNames.map((name) => {
+      const group = c.groups.find((g) => g.name === name);
+      const list = all.filter((m) => m.group === name);
+      return (
+        <section class="section group">
+          {name && <h2>Skupina {name}</h2>}
+          {group && <Standings group={group} caption={name ? undefined : 'Poredak'} />}
+          {byRound(list).map((r) => (
+            <div class="round">
+              <h3>
+                {r.round !== null ? `${r.round}. kolo` : 'Utakmice'}
+                {r.dates.length > 0 && <small>{formatRange(r.dates)}</small>}
+              </h3>
+              <MatchList matches={r.matches} />
+            </div>
+          ))}
+        </section>
+      );
+    })
+  }
+</Base>

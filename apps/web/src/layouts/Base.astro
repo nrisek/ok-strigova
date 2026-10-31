@@ -1,0 +1,83 @@
+---
+import '../styles/global.css';
+import { club, href, snapshot } from '../lib/data';
+import { formatStamp } from '../lib/format';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = `Raspored, rezultati i poredak svih ekipa kluba ${club.name}.` } = Astro.props;
+
+const nav = [
+  { label: 'Naslovnica', path: '/' },
+  { label: 'Ekipe', path: '/ekipe' },
+  { label: 'Utakmice', path: '/utakmice' },
+  { label: 'Natjecanja', path: '/natjecanja' },
+];
+const current = Astro.url.pathname.replace(/\/$/u, '') || '/';
+const isCurrent = (path: string): boolean => (path === '/' ? current === href('/') : current.startsWith(href(path)));
+---
+
+<!doctype html>
+<html lang="hr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} | {club.name}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#003070" />
+    <link rel="icon" href={href('/logo.png')} type="image/png" />
+    <link rel="apple-touch-icon" href={href('/logo.png')} />
+    <link rel="alternate" type="text/calendar" title={`Kalendar utakmica ${club.name}`} href={href('/kalendar.ics')} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href={href('/')}>
+          <img src={href('/logo.png')} alt="" width="46" height="46" />
+          <span>{club.name}</span>
+        </a>
+        <nav class="site-nav" aria-label="Glavna navigacija">
+          {nav.map((item) => (
+            <a href={href(item.path)} aria-current={isCurrent(item.path) ? 'page' : undefined}>
+              {item.label}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </header>
+
+    <main class="site-main">
+      <div class="wrap">
+        <slot />
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <p>
+          Podaci se automatski preuzimaju sa stranica
+          {snapshot.sources.map((s, i) => (
+            <>
+              {i > 0 && ' i '}
+              <a href={s.baseUrl}>{s.name}</a>
+              {s.lastChange && ` (zadnja promjena ${s.lastChange})`}
+            </>
+          ))}.
+          Osvježeno {formatStamp(snapshot.generatedAt)}.
+        </p>
+        <p>
+          <a href={href('/kalendar.ics')}>Kalendar svih utakmica (iCal)</a> za pretplatu u Google kalendaru ili na mobitelu.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+---
+import type { Match } from '@ok-strigova/scraper/model';
+import Base from '../layouts/Base.astro';
+import MatchList from '../components/MatchList.astro';
+import { href, results, sortKey, upcoming } from '../lib/data';
+import { formatMonth } from '../lib/format';
+
+function byMonth(list: Match[]): [string, Match[]][] {
+  const map = new Map<string, Match[]>();
+  for (const m of list) {
+    const key = sortKey(m).slice(0, 7);
+    map.set(key, [...(map.get(key) ?? []), m]);
+  }
+  return [...map.entries()];
+}
+---
+
+<Base title="Utakmice">
+  <div class="page-head">
+    <h1>Utakmice</h1>
+    <p>
+      Sve utakmice svih ekipa kluba. Kalendar se može dodati na mobitel preko
+      <a href={href('/kalendar.ics')}>iCal poveznice</a>.
+    </p>
+  </div>
+
+  <section class="section">
+    <h2>Nadolazeće</h2>
+    {
+      byMonth(upcoming).map(([month, list]) => (
+        <div class="round">
+          <h3>{formatMonth(`${month}-01`)}</h3>
+          <MatchList matches={list} showTeam showCompetition />
+        </div>
+      ))
+    }
+    {upcoming.length === 0 && <p class="empty">Nema zakazanih utakmica.</p>}
+  </section>
+
+  <section class="section">
+    <h2>Odigrane</h2>
+    {
+      byMonth(results).map(([month, list]) => (
+        <div class="round">
+          <h3>{formatMonth(`${month}-01`)}</h3>
+          <MatchList matches={list} showTeam showCompetition />
+        </div>
+      ))
+    }
+    {results.length === 0 && <p class="empty">Još nema odigranih utakmica.</p>}
+  </section>
+</Base>

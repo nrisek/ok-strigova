@@ -1,0 +1,26 @@
+{
+  "name": "@ok-strigova/scraper",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Dohvaća raspored, rezultate i poredak ekipa OK Štrigova s osvz.hr i osmz.hr",
+  "exports": {
+    "./model": "./src/model.ts",
+    "./teams": "./src/teams.ts"
+  },
+  "scripts": {
+    "scrape": "tsx src/cli.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "cheerio": "^1.2.0",
+    "domhandler": "^6.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.5"
+  }
+}

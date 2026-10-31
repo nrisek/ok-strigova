@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+import { competitionShortName, competitions, href, snapshot } from '../../lib/data';
+---
+
+<Base title="Natjecanja">
+  <div class="page-head">
+    <h1>Natjecanja</h1>
+    <p>Lige i turniri u kojima ove sezone nastupaju ekipe kluba, s potpunim poretkom i svim utakmicama.</p>
+  </div>
+
+  <ul class="competition-list">
+    {
+      competitions.map((c) => (
+        <li>
+          <h3>
+            <a href={href(`/natjecanja/${c.id}`)}>{competitionShortName(c)}</a>
+          </h3>
+          <p>
+            {c.category}. Naše ekipe: {c.clubTeams.join(', ')}.
+            {c.groups.length > 1 && ` Natjecanje ima ${c.groups.length} skupine.`}
+            {c.groups.length === 0 && ' Turnir bez tablice poretka.'}
+          </p>
+        </li>
+      ))
+    }
+  </ul>
+
+  {
+    snapshot.mirrors.length > 0 && (
+      <p class="empty">
+        Natjecanja koja oba saveza objavljuju s istim utakmicama prikazana su samo jednom (
+        {snapshot.mirrors.map((m) => m.name).join(', ')}).
+      </p>
+    )
+  }
+</Base>

@@ -1,0 +1,16 @@
+{
+  "name": "ok-strigova",
+  "private": true,
+  "packageManager": "pnpm@11.1.3",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "scrape": "pnpm --filter @ok-strigova/scraper scrape",
+    "dev": "pnpm --filter @ok-strigova/web dev",
+    "build": "pnpm --filter @ok-strigova/web build",
+    "preview": "pnpm --filter @ok-strigova/web preview",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck"
+  }
+}

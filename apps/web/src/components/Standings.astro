@@ -1,0 +1,55 @@
+---
+import type { CompetitionGroup } from '@ok-strigova/scraper/model';
+
+interface Props {
+  group: CompetitionGroup;
+  caption?: string;
+}
+
+const { group, caption } = Astro.props;
+---
+
+<div class="standings-wrap">
+<table class="standings">
+  {caption && <caption>{caption}</caption>}
+  <thead>
+    <tr>
+      <th class="rank" scope="col"><span class="visually-hidden">Mjesto</span></th>
+      <th class="team" scope="col">Ekipa</th>
+      <th scope="col" title="Odigrane utakmice">Ut.</th>
+      <th scope="col" title="Pobjede">Pob.</th>
+      <th scope="col" title="Porazi">Por.</th>
+      <th scope="col" title="Dobiveni i izgubljeni setovi">Setovi</th>
+      <th scope="col" class="wide" title="Dobiveni i izgubljeni poeni">Poeni</th>
+      <th scope="col" class="pts" title="Bodovi">Bod.</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      group.standings.map((r) => (
+        <tr class:list={{ 'is-club': r.isClub }}>
+          <td class="rank num">{r.rank}.</td>
+          <td class="team">{r.team}</td>
+          <td class="num">{r.played}</td>
+          <td class="num">{r.won}</td>
+          <td class="num">{r.lost}</td>
+          <td class="num">{r.setsWon}:{r.setsLost}</td>
+          <td class="num wide">{r.pointsWon}:{r.pointsLost}</td>
+          <td class="num pts">{r.points}</td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
+</div>
+
+<style>
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+</style>

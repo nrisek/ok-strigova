@@ -1,0 +1,25 @@
+---
+import type { Match } from '@ok-strigova/scraper/model';
+import MatchRow from './MatchRow.astro';
+
+interface Props {
+  matches: Match[];
+  showTeam?: boolean;
+  showCompetition?: boolean;
+  empty?: string;
+}
+
+const { matches, showTeam = false, showCompetition = false, empty = 'Nema utakmica.' } = Astro.props;
+---
+
+{
+  matches.length > 0 ? (
+    <ul class="matches">
+      {matches.map((m) => (
+        <MatchRow match={m} showTeam={showTeam} showCompetition={showCompetition} />
+      ))}
+    </ul>
+  ) : (
+    <p class="empty panel">{empty}</p>
+  )
+}

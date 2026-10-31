@@ -1,0 +1,59 @@
+# Objava statičnog sitea na GitHub Pages.
+# Radi tek kad u repozitoriju postavite varijablu DEPLOY_PAGES=true
+# (Settings → Secrets and variables → Actions → Variables) i uključite Pages
+# (Settings → Pages → Source: GitHub Actions). Za vlastitu domenu dodatno postavite
+# varijable SITE_URL (npr. https://okstrigova.hr) i BASE_PATH (/).
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: vars.DEPLOY_PAGES == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Postavi adresu sitea
+        run: |
+          SITE_URL="${{ vars.SITE_URL }}"
+          BASE_PATH="${{ vars.BASE_PATH }}"
+          [ -n "$SITE_URL" ] || SITE_URL="https://${GITHUB_REPOSITORY_OWNER}.github.io"
+          [ -n "$BASE_PATH" ] || BASE_PATH="/${GITHUB_REPOSITORY#*/}"
+          echo "SITE_URL=$SITE_URL" >> "$GITHUB_ENV"
+          echo "BASE_PATH=$BASE_PATH" >> "$GITHUB_ENV"
+      - run: pnpm build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

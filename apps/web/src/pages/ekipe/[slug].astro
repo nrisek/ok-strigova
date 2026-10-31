@@ -1,0 +1,83 @@
+---
+import type { Competition, Match, Team } from '@ok-strigova/scraper/model';
+import Base from '../../layouts/Base.astro';
+import MatchList from '../../components/MatchList.astro';
+import Standings from '../../components/Standings.astro';
+import { competitionFor, competitionShortName, href, matchesOf, plural, standingOf, teamLabel, teams } from '../../lib/data';
+import { formatRange } from '../../lib/format';
+
+export function getStaticPaths() {
+  return teams.map((team) => ({ params: { slug: team.slug }, props: { team } }));
+}
+
+interface Props {
+  team: Team;
+}
+
+const { team } = Astro.props;
+const label = teamLabel(team);
+const all = matchesOf(team);
+const competitions = team.competitionIds.map(competitionFor).filter((c): c is Competition => c !== undefined);
+
+function byRound(list: Match[]): { round: number | null; dates: string[]; matches: Match[] }[] {
+  const map = new Map<number | null, { round: number | null; dates: string[]; matches: Match[] }>();
+  for (const m of list) {
+    const entry = map.get(m.round) ?? { round: m.round, dates: m.roundDates, matches: [] };
+    entry.matches.push(m);
+    map.set(m.round, entry);
+  }
+  return [...map.values()];
+}
+
+const primary = competitions.map((c) => standingOf(team, c)).find((s) => s !== null);
+---
+
+<Base title={label}>
+  <div class="page-head">
+    <h1>{label}</h1>
+    <p>{team.category}</p>
+    <div class="meta-list">
+      {team.hall && <span>Dvorana: <b>{team.hall}</b></span>}
+      {team.contact && <span>Kontakt: <b>{team.contact}</b></span>}
+      {
+        primary && (
+          <span>
+            Bilanca: <b>{plural(primary.row.won, 'pobjeda', 'pobjede', 'pobjeda')}</b>,{' '}
+            <b>{plural(primary.row.lost, 'poraz', 'poraza', 'poraza')}</b>, setovi{' '}
+            <b class="num">
+              {primary.row.setsWon}:{primary.row.setsLost}
+            </b>
+          </span>
+        )
+      }
+      <span><a href={href(`/kalendar/${team.slug}.ics`)}>Kalendar ekipe (iCal)</a></span>
+      <span><a href={team.url}>Stranica ekipe na savezu</a></span>
+    </div>
+  </div>
+
+  {
+    competitions.map((c) => {
+      const standing = standingOf(team, c);
+      const list = all.filter((m) => m.competitionId === c.id);
+      return (
+        <section class="section">
+          <h2>
+            <a href={href(`/natjecanja/${c.id}`)}>{competitionShortName(c)}</a>
+          </h2>
+          {standing && (
+            <Standings group={standing.group} caption={standing.group.name ? `Skupina ${standing.group.name}` : 'Poredak'} />
+          )}
+          {byRound(list).map((r) => (
+            <div class="round">
+              <h3>
+                {r.round !== null ? `${r.round}. kolo` : 'Utakmice'}
+                {r.dates.length > 0 && <small>{formatRange(r.dates)}</small>}
+              </h3>
+              <MatchList matches={r.matches} />
+            </div>
+          ))}
+        </section>
+      );
+    })
+  }
+</Base>
