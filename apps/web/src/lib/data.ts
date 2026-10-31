@@ -104,8 +104,8 @@ export function competitionFor(id: string): Competition | undefined {
   return competitionsById.get(id);
 }
 
-/** Boje ekipa kluba, redom kako su ekipe poredane (seniorke prve). Tekst mora biti čitljiv na bijelom. */
-const TEAM_PALETTE = ['#003070', '#1a7fc1', '#c2410c', '#15803d', '#6d28d9', '#be185d'];
+/** Boje ekipa kluba, redom kako su ekipe poredane (seniorke prve). Tekst mora biti čitljiv na tamnoj podlozi. */
+const TEAM_PALETTE = ['#4fc3f7', '#ff8a65', '#69f0ae', '#b388ff', '#ffd166', '#f48fb1'];
 
 export function teamColor(team: Team): string {
   const index = teams.indexOf(team);

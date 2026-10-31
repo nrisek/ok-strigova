@@ -1,6 +1,6 @@
 ---
 import type { Match } from '@ok-strigova/scraper/model';
-import { clubTeamsOf, competitionFor, competitionShortName, href } from '../lib/data';
+import { clubTeamsOf, competitionFor, competitionShortName, href, teamColor } from '../lib/data';
 import { formatDayFull, formatRange, formatTime } from '../lib/format';
 
 interface Props {
@@ -12,6 +12,7 @@ const competition = competitionFor(m.competitionId);
 const time = m.scheduledAt ? formatTime(m.scheduledAt) : null;
 const when = m.scheduledAt ? formatDayFull(m.scheduledAt) : formatRange(m.roundDates);
 const team = clubTeamsOf(m)[0];
+const accent = team ? `--team:${teamColor(team)}` : undefined;
 const note =
   m.status === 'postponed'
     ? 'Utakmica je odgođena, novi termin još nije objavljen.'
@@ -20,11 +21,12 @@ const note =
       : null;
 ---
 
-<section class="next" aria-labelledby="next-title">
+<section class="next" aria-labelledby="next-title" style={accent}>
   <div>
     <p class="next__label" id="next-title">Sljedeća utakmica</p>
     <p class="next__teams">
       <span class:list={{ 'is-club': m.clubTeams.includes(m.home) }}>{m.home}</span>
+      <span class="next__vs" aria-hidden="true">VS</span>
       <span class:list={{ 'is-club': m.clubTeams.includes(m.away) }}>{m.away}</span>
     </p>
   </div>
