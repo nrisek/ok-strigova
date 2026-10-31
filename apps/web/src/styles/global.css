@@ -339,14 +339,10 @@ small {
   color: var(--team, var(--accent));
 }
 
-.next__vs {
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  font-weight: 700;
-  letter-spacing: 0.32em;
-  color: var(--text-soft);
-  padding: 10px 0 4px 4px;
-  line-height: 1;
+.next__teams span + span {
+  margin-top: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-strong);
 }
 
 .next__details {
