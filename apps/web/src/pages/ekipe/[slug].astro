@@ -1,9 +1,21 @@
 ---
 import type { Competition, Match, Team } from '@ok-strigova/scraper/model';
 import Base from '../../layouts/Base.astro';
-import MatchGroup from '../../components/MatchGroup.astro';
 import Standings from '../../components/Standings.astro';
-import { addDays, competitionFor, competitionShortName, href, matchesOf, plural, standingOf, teamColor, teamLabel, teams, weekStartOf } from '../../lib/data';
+import WeekSection from '../../components/WeekSection.astro';
+import {
+  addDays,
+  competitionFor,
+  competitionShortName,
+  href,
+  matchesOf,
+  plural,
+  standingOf,
+  teamColor,
+  teamLabel,
+  teams,
+  weekStartOf,
+} from '../../lib/data';
 import { formatRange } from '../../lib/format';
 
 export function getStaticPaths() {
@@ -34,6 +46,7 @@ const primary = competitions.map((c) => standingOf(team, c)).find((s) => s !== n
 
 <Base title={label}>
   <div class="page-head page-head--team" style={`--team:${teamColor(team)}`}>
+    <p class="label">Ekipa</p>
     <h1>{label}</h1>
     <p>{team.category}</p>
     <div class="meta-list">
@@ -60,18 +73,24 @@ const primary = competitions.map((c) => standingOf(team, c)).find((s) => s !== n
       const standing = standingOf(team, c);
       const list = all.filter((m) => m.competitionId === c.id);
       return (
-        <section class="section">
-          <h2>
-            <a href={href(`/natjecanja/${c.id}`)}>{competitionShortName(c)}</a>
-          </h2>
+        <section class="week">
+          <header class="week__head">
+            <div>
+              <p class="label">{c.category}</p>
+              <h2>
+                <a href={href(`/natjecanja/${c.id}`)}>{competitionShortName(c)}</a>
+              </h2>
+            </div>
+          </header>
           {standing && (
             <Standings competition={c} group={standing.group} caption={standing.group.name ? `Skupina ${standing.group.name}` : 'Poredak'} />
           )}
           {byRound(list).map((r) => (
-            <MatchGroup
-              title={r.round !== null ? `${r.round}. kolo` : 'Utakmice'}
-              subtitle={r.dates.length > 0 ? formatRange(r.dates) : null}
+            <WeekSection
+              label={r.round !== null ? `${r.round}. kolo` : 'Utakmice'}
+              title={r.dates.length > 0 ? formatRange(r.dates) : 'Turnir'}
               matches={r.matches}
+              showCompetition={false}
               weekStart={r.dates[0] ? weekStartOf(r.dates[0]) : undefined}
               weekEnd={r.dates[0] ? addDays(weekStartOf(r.dates[0]), 6) : undefined}
             />

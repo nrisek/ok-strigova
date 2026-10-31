@@ -5,6 +5,7 @@ import { competitionShortName, competitions, href, snapshot } from '../../lib/da
 
 <Base title="Natjecanja">
   <div class="page-head">
+    <p class="label">Sezona</p>
     <h1>Natjecanja</h1>
     <p>Lige i turniri u kojima ove sezone nastupaju ekipe kluba, s potpunim poretkom i svim utakmicama.</p>
   </div>
@@ -28,7 +29,7 @@ import { competitionShortName, competitions, href, snapshot } from '../../lib/da
 
   {
     snapshot.mirrors.length > 0 && (
-      <p class="empty">
+      <p class="note">
         Natjecanja koja oba saveza objavljuju s istim utakmicama prikazana su samo jednom (
         {snapshot.mirrors.map((m) => m.name).join(', ')}).
       </p>

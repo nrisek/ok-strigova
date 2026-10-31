@@ -1,8 +1,8 @@
 ---
 import type { Competition, Match } from '@ok-strigova/scraper/model';
 import Base from '../../layouts/Base.astro';
-import MatchGroup from '../../components/MatchGroup.astro';
 import Standings from '../../components/Standings.astro';
+import WeekSection from '../../components/WeekSection.astro';
 import { addDays, competitionShortName, competitions, matches, weekStartOf } from '../../lib/data';
 import { formatRange } from '../../lib/format';
 
@@ -31,8 +31,9 @@ function byRound(list: Match[]): { round: number | null; dates: string[]; matche
 
 <Base title={competitionShortName(c)}>
   <div class="page-head">
+    <p class="label">{c.category}</p>
     <h1>{competitionShortName(c)}</h1>
-    <p>{c.category}. Naše ekipe: {c.clubTeams.join(', ')}.</p>
+    <p>Naše ekipe: {c.clubTeams.join(', ')}.</p>
     <div class="meta-list">
       <span><a href={c.url}>Natjecanje na stranici saveza</a></span>
     </div>
@@ -43,14 +44,22 @@ function byRound(list: Match[]): { round: number | null; dates: string[]; matche
       const group = c.groups.find((g) => g.name === name);
       const list = all.filter((m) => m.group === name);
       return (
-        <section class="section group">
-          {name && <h2>Skupina {name}</h2>}
+        <section class="week group">
+          {name && (
+            <header class="week__head">
+              <div>
+                <p class="label">Skupina</p>
+                <h2>Skupina {name}</h2>
+              </div>
+            </header>
+          )}
           {group && <Standings competition={c} group={group} caption={name ? undefined : 'Poredak'} />}
           {byRound(list).map((r) => (
-            <MatchGroup
-              title={r.round !== null ? `${r.round}. kolo` : 'Utakmice'}
-              subtitle={r.dates.length > 0 ? formatRange(r.dates) : null}
+            <WeekSection
+              label={r.round !== null ? `${r.round}. kolo` : 'Utakmice'}
+              title={r.dates.length > 0 ? formatRange(r.dates) : 'Turnir'}
               matches={r.matches}
+              showCompetition={false}
               weekStart={r.dates[0] ? weekStartOf(r.dates[0]) : undefined}
               weekEnd={r.dates[0] ? addDays(weekStartOf(r.dates[0]), 6) : undefined}
             />

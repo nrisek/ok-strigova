@@ -27,14 +27,14 @@ const isCurrent = (path: string): boolean => (path === '/' ? current === href('/
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} | {club.name}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#0b1730" />
+    <meta name="theme-color" content="#0f1a33" />
     <link rel="icon" href={href('/logo.png')} type="image/png" />
     <link rel="apple-touch-icon" href={href('/logo.png')} />
     <link rel="alternate" type="text/calendar" title={`Kalendar utakmica ${club.name}`} href={href('/kalendar.ics')} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800&family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;600;700&family=Barlow+Semi+Condensed:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
   </head>
@@ -42,7 +42,7 @@ const isCurrent = (path: string): boolean => (path === '/' ? current === href('/
     <header class="site-header">
       <div class="wrap">
         <a class="brand" href={href('/')}>
-          <img src={href('/logo.png')} alt="" width="46" height="46" />
+          <img src={href('/logo.png')} alt="" width="50" height="50" />
           <span>{club.name}</span>
         </a>
         <nav class="site-nav" aria-label="Glavna navigacija">
@@ -63,6 +63,7 @@ const isCurrent = (path: string): boolean => (path === '/' ? current === href('/
 
     <footer class="site-footer">
       <div class="wrap">
+        <p class="sign">Vidimo se u dvorani!</p>
         <p>
           Podaci se automatski preuzimaju sa stranica
           {snapshot.sources.map((s, i) => (
@@ -80,7 +81,7 @@ const isCurrent = (path: string): boolean => (path === '/' ? current === href('/
       </div>
     </footer>
     <script is:inline>
-      // Označi karticu tjedna u kojem smo danas (računa se kod posjetitelja, ne kod builda).
+      // Označi tjedan u kojem smo danas (računa se kod posjetitelja, ne kod builda).
       (() => {
         const now = new Date();
         const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;

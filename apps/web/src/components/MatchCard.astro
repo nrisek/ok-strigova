@@ -1,0 +1,96 @@
+---
+import type { Match } from '@ok-strigova/scraper/model';
+import { clubOutcome, clubTeamsOf, competitionFor, competitionShortName, href, teamColor, teamFor, teamShort } from '../lib/data';
+import { formatRangeShort, formatResult, formatSets, formatShortDate, formatTime, formatWeekday, formatWeekdayShort } from '../lib/format';
+
+interface Props {
+  match: Match;
+  showTeam?: boolean;
+  showCompetition?: boolean;
+}
+
+const { match: m, showTeam = false, showCompetition = true } = Astro.props;
+
+const outcome = clubOutcome(m);
+const result = formatResult(m);
+const time = m.scheduledAt ? formatTime(m.scheduledAt) : null;
+const competition = competitionFor(m.competitionId);
+const clubTeams = clubTeamsOf(m);
+const isBye = m.status === 'bye';
+const byeTeam = m.home === '0' ? m.away : m.home;
+
+let day = '';
+let date = '';
+if (m.scheduledAt) {
+  day = formatWeekday(m.scheduledAt);
+  date = formatShortDate(m.scheduledAt);
+} else if (m.roundDates.length > 0) {
+  const first = m.roundDates[0]!;
+  const last = m.roundDates[m.roundDates.length - 1]!;
+  day = first === last ? formatWeekday(first) : `${formatWeekdayShort(first)} – ${formatWeekdayShort(last)}`;
+  date = formatRangeShort(m.roundDates, false);
+}
+const note = m.status === 'postponed' ? 'odgođeno' : m.status === 'tbd' ? 'termin nije određen' : null;
+
+const teamStyle = (name: string): string | undefined => {
+  const team = teamFor(m, name);
+  return team ? `--team:${teamColor(team)}` : undefined;
+};
+const accent = clubTeams[0] ? `--team:${teamColor(clubTeams[0])}` : undefined;
+---
+
+<li
+  class:list={['mc', { 'mc--club': clubTeams.length > 0, 'mc--win': outcome === 'win', 'mc--loss': outcome === 'loss', 'mc--bye': isBye }]}
+  style={accent}
+>
+  <div class="mc__when">
+    <span class="mc__day">{day || 'datum'}</span>
+    <span class:list={['mc__time', { 'mc__time--none': !time }]}>{time ?? '–'}</span>
+    <span class="mc__date">{date || 'nepoznat'}</span>
+  </div>
+  <div class="mc__body">
+    {
+      showCompetition && competition && (
+        <a class="mc__comp" href={href(`/natjecanja/${competition.id}`)}>
+          {competitionShortName(competition) + (m.round ? `, ${m.round}. kolo` : '')}
+        </a>
+      )
+    }
+    {
+      isBye ? (
+        <p class="mc__teams">
+          <span class="is-club" style={teamStyle(byeTeam)}>
+            {byeTeam}
+          </span>
+          <span class="mc__free">slobodno kolo</span>
+        </p>
+      ) : (
+        <p class="mc__teams">
+          <span class:list={{ 'is-club': m.clubTeams.includes(m.home) }} style={teamStyle(m.home)}>
+            {m.home}
+          </span>
+          {result ? <span class="mc__score num">{result}</span> : <span class="mc__vs">vs</span>}
+          <span class:list={{ 'is-club': m.clubTeams.includes(m.away) }} style={teamStyle(m.away)}>
+            {m.away}
+          </span>
+        </p>
+      )
+    }
+    {
+      (note || outcome || m.venue || m.sets.length > 0 || (showTeam && clubTeams.length > 0)) && (
+        <p class="mc__meta">
+          {note && <span class="mc__note">{note}</span>}
+          {outcome && <span class="mc__outcome">{outcome === 'win' ? 'pobjeda' : 'poraz'}</span>}
+          {m.venue && <span>{m.venue}</span>}
+          {m.sets.length > 0 && <span class="num">{formatSets(m.sets)}</span>}
+          {showTeam &&
+            clubTeams.map((t) => (
+              <a class="chip" href={href(`/ekipe/${t.slug}`)} style={`--team:${teamColor(t)}`}>
+                {teamShort(t)}
+              </a>
+            ))}
+        </p>
+      )
+    }
+  </div>
+</li>

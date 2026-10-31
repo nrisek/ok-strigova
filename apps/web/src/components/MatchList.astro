@@ -1,6 +1,6 @@
 ---
 import type { Match } from '@ok-strigova/scraper/model';
-import MatchRow from './MatchRow.astro';
+import MatchCard from './MatchCard.astro';
 
 interface Props {
   matches: Match[];
@@ -9,17 +9,17 @@ interface Props {
   empty?: string;
 }
 
-const { matches, showTeam = false, showCompetition = false, empty = 'Nema utakmica.' } = Astro.props;
+const { matches, showTeam = false, showCompetition = true, empty = 'Nema utakmica.' } = Astro.props;
 ---
 
 {
   matches.length > 0 ? (
-    <ul class="matches">
+    <ul class="cards">
       {matches.map((m) => (
-        <MatchRow match={m} showTeam={showTeam} showCompetition={showCompetition} />
+        <MatchCard match={m} showTeam={showTeam} showCompetition={showCompetition} />
       ))}
     </ul>
   ) : (
-    <p class="empty panel">{empty}</p>
+    <p class="empty">{empty}</p>
   )
 }

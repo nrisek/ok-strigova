@@ -6,8 +6,9 @@ import { teams } from '../../lib/data';
 
 <Base title="Ekipe">
   <div class="page-head">
+    <p class="label">Klub</p>
     <h1>Ekipe</h1>
     <p>Sve ekipe kluba koje se natječu ove sezone, s trenutnim mjestom u svojoj ligi.</p>
   </div>
-  <div class="team-list">{teams.map((team) => <TeamSummary team={team} />)}</div>
+  <div class="team-grid">{teams.map((team) => <TeamSummary team={team} />)}</div>
 </Base>

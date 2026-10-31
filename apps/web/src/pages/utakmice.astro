@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import MatchGroup from '../components/MatchGroup.astro';
+import WeekSection from '../components/WeekSection.astro';
 import { groupByWeek, href, results, upcoming } from '../lib/data';
 import { formatRange } from '../lib/format';
 
@@ -10,6 +10,7 @@ const resultWeeks = groupByWeek(results);
 
 <Base title="Utakmice">
   <div class="page-head">
+    <p class="label">Raspored</p>
     <h1>Utakmice</h1>
     <p>
       Sve utakmice svih ekipa kluba. Kalendar se može dodati na mobitel preko
@@ -17,23 +18,17 @@ const resultWeeks = groupByWeek(results);
     </p>
   </div>
 
-  <section class="section">
-    <h2>Nadolazeće</h2>
-    {
-      upcomingWeeks.map((w) => (
-        <MatchGroup title={formatRange([w.start, w.end])} matches={w.matches} showTeam showCompetition weekStart={w.start} weekEnd={w.end} />
-      ))
-    }
-    {upcomingWeeks.length === 0 && <p class="empty panel">Nema zakazanih utakmica.</p>}
-  </section>
+  {
+    upcomingWeeks.map((w) => (
+      <WeekSection label="Najava" title={formatRange([w.start, w.end])} matches={w.matches} showTeam weekStart={w.start} weekEnd={w.end} />
+    ))
+  }
+  {upcomingWeeks.length === 0 && <p class="empty">Nema zakazanih utakmica.</p>}
 
-  <section class="section">
-    <h2>Odigrane</h2>
-    {
-      resultWeeks.map((w) => (
-        <MatchGroup title={formatRange([w.start, w.end])} matches={w.matches} showTeam showCompetition weekStart={w.start} weekEnd={w.end} />
-      ))
-    }
-    {resultWeeks.length === 0 && <p class="empty panel">Još nema odigranih utakmica.</p>}
-  </section>
+  {
+    resultWeeks.map((w) => (
+      <WeekSection label="Rezultati" title={formatRange([w.start, w.end])} matches={w.matches} showTeam weekStart={w.start} weekEnd={w.end} />
+    ))
+  }
+  {resultWeeks.length === 0 && <p class="empty">Još nema odigranih utakmica.</p>}
 </Base>

@@ -104,8 +104,8 @@ export function competitionFor(id: string): Competition | undefined {
   return competitionsById.get(id);
 }
 
-/** Boje ekipa kluba, redom kako su ekipe poredane (seniorke prve). Tekst mora biti čitljiv na tamnoj podlozi. */
-const TEAM_PALETTE = ['#4fc3f7', '#ff8a65', '#69f0ae', '#b388ff', '#ffd166', '#f48fb1'];
+/** Boje ekipa kluba, redom kako su ekipe poredane (seniorke prve). Tekst mora biti čitljiv na krem podlozi; narančasta je rezervirana za naglasak. */
+const TEAM_PALETTE = ['#1e4fd8', '#0b7d6a', '#b3237c', '#6d28d9', '#b45309', '#0369a1'];
 
 export function teamColor(team: Team): string {
   const index = teams.indexOf(team);
@@ -161,4 +161,14 @@ export function href(path: string): string {
   const base = import.meta.env.BASE_URL.replace(/\/$/u, '');
   const joined = `${base}/${path.replace(/^\//u, '')}`;
   return joined.length > 1 ? joined.replace(/\/$/u, '') : joined;
+}
+
+/** Datumi na koje se utakmice igraju (termin ili dani kola), bez duplikata, sortirani. */
+export function matchDatesOf(list: Match[]): string[] {
+  return [...new Set(list.flatMap((m) => (m.scheduledAt ? [m.scheduledAt.slice(0, 10)] : m.roundDates)))].sort();
+}
+
+/** Svi datumi padaju na subotu ili nedjelju. */
+export function isWeekend(dates: string[]): boolean {
+  return dates.length > 0 && dates.every((d) => [0, 6].includes(new Date(`${d}T00:00:00Z`).getUTCDay()));
 }

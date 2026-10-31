@@ -70,3 +70,34 @@ export function formatSets(sets: SetScore[]): string {
 export function formatResult(m: Match): string | null {
   return m.result ? `${m.result.home}:${m.result.away}` : null;
 }
+
+const weekdayFmt = fmt({ weekday: 'long' });
+const weekdayShortFmt = fmt({ weekday: 'short' });
+
+/** "subota" */
+export function formatWeekday(iso: string): string {
+  return weekdayFmt.format(asDate(iso));
+}
+
+/** "sub" */
+export function formatWeekdayShort(iso: string): string {
+  return weekdayShortFmt.format(asDate(iso)).replace(/\.$/u, '');
+}
+
+/** "3.10." ili "3.10.2026." */
+export function formatShortDate(iso: string, withYear = false): string {
+  const [y, m, d] = iso.slice(0, 10).split('-');
+  return `${Number(d)}.${Number(m)}.${withYear ? `${y}.` : ''}`;
+}
+
+/** ["2026-10-03","2026-10-04"] → "3. – 4.10.2026." (stil plakata). */
+export function formatRangeShort(dates: string[], withYear = true): string {
+  const first = dates[0];
+  const last = dates[dates.length - 1];
+  if (!first || !last) return '';
+  if (first === last) return formatShortDate(first, withYear);
+  if (first.slice(0, 7) === last.slice(0, 7)) {
+    return `${Number(first.slice(8, 10))}. – ${formatShortDate(last, withYear)}`;
+  }
+  return `${formatShortDate(first)} – ${formatShortDate(last, withYear)}`;
+}

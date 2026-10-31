@@ -1,49 +1,60 @@
 ---
 import Base from '../layouts/Base.astro';
-import MatchGroup from '../components/MatchGroup.astro';
-import NextMatch from '../components/NextMatch.astro';
 import TeamSummary from '../components/TeamSummary.astro';
-import { groupByWeek, href, results, teams, upcoming } from '../lib/data';
-import { formatRange } from '../lib/format';
+import WeekSection from '../components/WeekSection.astro';
+import { groupByWeek, href, isWeekend, matchDatesOf, results, teams, upcoming } from '../lib/data';
+import { formatRange, formatRangeShort } from '../lib/format';
 
-const next = upcoming[0];
-const upcomingWeeks = groupByWeek(upcoming.slice(0, 12));
-const resultWeeks = groupByWeek(results.slice(0, 10));
+const [firstWeek, ...laterWeeks] = groupByWeek(upcoming);
+const resultWeeks = groupByWeek(results).slice(0, 2);
+const heroDates = firstWeek ? matchDatesOf(firstWeek.matches) : [];
 ---
 
 <Base title="Naslovnica">
-  {next ? <NextMatch match={next} /> : <p class="empty">Trenutno nema zakazanih utakmica.</p>}
+  {
+    firstWeek ? (
+      <WeekSection
+        hero
+        label="Najava"
+        title={isWeekend(heroDates) ? 'Utakmice vikenda' : 'Utakmice tjedna'}
+        dates={formatRangeShort(heroDates)}
+        matches={firstWeek.matches}
+        showTeam
+        weekStart={firstWeek.start}
+        weekEnd={firstWeek.end}
+      />
+    ) : (
+      <section class="week week--hero">
+        <header class="week__head">
+          <div>
+            <p class="label">Najava</p>
+            <h2>Nema zakazanih utakmica</h2>
+          </div>
+        </header>
+      </section>
+    )
+  }
+  {
+    laterWeeks.slice(0, 2).map((w) => (
+      <WeekSection label="Najava" title={formatRange([w.start, w.end])} matches={w.matches} showTeam weekStart={w.start} weekEnd={w.end} />
+    ))
+  }
+  <a class="more" href={href('/utakmice')}>Sve utakmice</a>
 
-  <div class="home">
-    <section class="section">
-      <div class="section-head">
-        <h2>Nadolazeće utakmice</h2>
-        <a class="section-link" href={href('/utakmice')}>Sve utakmice</a>
-      </div>
-      {
-        upcomingWeeks.map((w) => (
-          <MatchGroup title={formatRange([w.start, w.end])} matches={w.matches} showTeam showCompetition weekStart={w.start} weekEnd={w.end} />
-        ))
-      }
-      {upcomingWeeks.length === 0 && <p class="empty panel">Nema zakazanih utakmica.</p>}
-    </section>
+  {
+    resultWeeks.map((w) => (
+      <WeekSection label="Rezultati" title={formatRange([w.start, w.end])} matches={w.matches} showTeam weekStart={w.start} weekEnd={w.end} />
+    ))
+  }
 
-    <section class="section">
-      <h2>Zadnji rezultati</h2>
-      {
-        resultWeeks.map((w) => (
-          <MatchGroup title={formatRange([w.start, w.end])} matches={w.matches} showTeam showCompetition weekStart={w.start} weekEnd={w.end} />
-        ))
-      }
-      {resultWeeks.length === 0 && <p class="empty panel">Još nema odigranih utakmica.</p>}
-    </section>
-
-    <aside class="section">
-      <div class="section-head">
+  <section class="week">
+    <header class="week__head">
+      <div>
+        <p class="label">Klub</p>
         <h2>Naše ekipe</h2>
-        <a class="section-link" href={href('/ekipe')}>Sve ekipe</a>
       </div>
-      <div class="team-list">{teams.map((team) => <TeamSummary team={team} />)}</div>
-    </aside>
-  </div>
+      <p class="week__dates"><a href={href('/ekipe')}>Sve ekipe</a></p>
+    </header>
+    <div class="team-grid">{teams.map((team) => <TeamSummary team={team} />)}</div>
+  </section>
 </Base>

@@ -1,0 +1,42 @@
+---
+import type { Match } from '@ok-strigova/scraper/model';
+import MatchList from './MatchList.astro';
+
+interface Props {
+  /** Mala narančasta oznaka iznad naslova, npr. "Najava" ili "5. kolo". */
+  label: string;
+  title: string;
+  /** Datumi desno od naslova, npr. "3. – 4.10.2026." */
+  dates?: string | null;
+  matches: Match[];
+  showTeam?: boolean;
+  showCompetition?: boolean;
+  hero?: boolean;
+  /** Granice tjedna (ISO) da se tekući tjedan može istaknuti kod posjetitelja. */
+  weekStart?: string;
+  weekEnd?: string;
+}
+
+const {
+  label,
+  title,
+  dates = null,
+  matches,
+  showTeam = false,
+  showCompetition = true,
+  hero = false,
+  weekStart,
+  weekEnd,
+} = Astro.props;
+---
+
+<section class:list={['week', { 'week--hero': hero }]} data-week-start={weekStart} data-week-end={weekEnd}>
+  <header class="week__head">
+    <div>
+      <p class="label">{label}<span class="week__now">ovaj tjedan</span></p>
+      <h2>{title}</h2>
+    </div>
+    {dates && <p class="week__dates">{dates}</p>}
+  </header>
+  <MatchList matches={matches} showTeam={showTeam} showCompetition={showCompetition} />
+</section>
