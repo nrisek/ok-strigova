@@ -1,9 +1,9 @@
 ---
 import type { Competition, Match, Team } from '@ok-strigova/scraper/model';
 import Base from '../../layouts/Base.astro';
-import MatchList from '../../components/MatchList.astro';
+import MatchGroup from '../../components/MatchGroup.astro';
 import Standings from '../../components/Standings.astro';
-import { competitionFor, competitionShortName, href, matchesOf, plural, standingOf, teamLabel, teams } from '../../lib/data';
+import { addDays, competitionFor, competitionShortName, href, matchesOf, plural, standingOf, teamColor, teamLabel, teams, weekStartOf } from '../../lib/data';
 import { formatRange } from '../../lib/format';
 
 export function getStaticPaths() {
@@ -33,7 +33,7 @@ const primary = competitions.map((c) => standingOf(team, c)).find((s) => s !== n
 ---
 
 <Base title={label}>
-  <div class="page-head">
+  <div class="page-head page-head--team" style={`--team:${teamColor(team)}`}>
     <h1>{label}</h1>
     <p>{team.category}</p>
     <div class="meta-list">
@@ -65,16 +65,16 @@ const primary = competitions.map((c) => standingOf(team, c)).find((s) => s !== n
             <a href={href(`/natjecanja/${c.id}`)}>{competitionShortName(c)}</a>
           </h2>
           {standing && (
-            <Standings group={standing.group} caption={standing.group.name ? `Skupina ${standing.group.name}` : 'Poredak'} />
+            <Standings competition={c} group={standing.group} caption={standing.group.name ? `Skupina ${standing.group.name}` : 'Poredak'} />
           )}
           {byRound(list).map((r) => (
-            <div class="round">
-              <h3>
-                {r.round !== null ? `${r.round}. kolo` : 'Utakmice'}
-                {r.dates.length > 0 && <small>{formatRange(r.dates)}</small>}
-              </h3>
-              <MatchList matches={r.matches} />
-            </div>
+            <MatchGroup
+              title={r.round !== null ? `${r.round}. kolo` : 'Utakmice'}
+              subtitle={r.dates.length > 0 ? formatRange(r.dates) : null}
+              matches={r.matches}
+              weekStart={r.dates[0] ? weekStartOf(r.dates[0]) : undefined}
+              weekEnd={r.dates[0] ? addDays(weekStartOf(r.dates[0]), 6) : undefined}
+            />
           ))}
         </section>
       );

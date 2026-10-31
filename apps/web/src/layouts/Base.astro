@@ -79,5 +79,15 @@ const isCurrent = (path: string): boolean => (path === '/' ? current === href('/
         </p>
       </div>
     </footer>
+    <script is:inline>
+      // Označi karticu tjedna u kojem smo danas (računa se kod posjetitelja, ne kod builda).
+      (() => {
+        const now = new Date();
+        const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        for (const el of document.querySelectorAll('[data-week-start]')) {
+          if (el.dataset.weekStart <= today && today <= el.dataset.weekEnd) el.classList.add('is-current');
+        }
+      })();
+    </script>
   </body>
 </html>

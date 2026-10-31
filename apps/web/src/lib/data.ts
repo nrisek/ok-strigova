@@ -104,6 +104,50 @@ export function competitionFor(id: string): Competition | undefined {
   return competitionsById.get(id);
 }
 
+/** Boje ekipa kluba, redom kako su ekipe poredane (seniorke prve). Tekst mora biti čitljiv na bijelom. */
+const TEAM_PALETTE = ['#003070', '#1a7fc1', '#c2410c', '#15803d', '#6d28d9', '#be185d'];
+
+export function teamColor(team: Team): string {
+  const index = teams.indexOf(team);
+  return TEAM_PALETTE[(index >= 0 ? index : 0) % TEAM_PALETTE.length]!;
+}
+
+/** Ekipa kluba u tablici poretka danog natjecanja, ako je redak ekipa kluba. */
+export function teamInStandings(competition: Competition, teamName: string): Team | undefined {
+  return teams.find((t) => t.site === competition.site && t.name === teamName && t.competitionIds.includes(competition.id));
+}
+
+export function addDays(date: string, days: number): string {
+  const d = new Date(`${date}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+/** Ponedjeljak tjedna u kojem je datum (ISO). */
+export function weekStartOf(date: string): string {
+  const d = new Date(`${date}T00:00:00Z`);
+  const offset = (d.getUTCDay() + 6) % 7;
+  return addDays(date, -offset);
+}
+
+export interface WeekGroup {
+  start: string;
+  end: string;
+  matches: Match[];
+}
+
+/** Grupira utakmice po tjednima (pon–ned), zadržavajući redoslijed ulaznog popisa. */
+export function groupByWeek(list: Match[]): WeekGroup[] {
+  const groups = new Map<string, WeekGroup>();
+  for (const m of list) {
+    const start = weekStartOf(sortKey(m).slice(0, 10));
+    let group = groups.get(start);
+    if (!group) groups.set(start, (group = { start, end: addDays(start, 6), matches: [] }));
+    group.matches.push(m);
+  }
+  return [...groups.values()];
+}
+
 /** Hrvatska množina: plural(3, 'bod', 'boda', 'bodova') → "3 boda". */
 export function plural(n: number, one: string, few: string, many: string): string {
   const mod10 = n % 10;

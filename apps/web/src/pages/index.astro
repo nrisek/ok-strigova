@@ -1,13 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
-import MatchList from '../components/MatchList.astro';
+import MatchGroup from '../components/MatchGroup.astro';
 import NextMatch from '../components/NextMatch.astro';
 import TeamSummary from '../components/TeamSummary.astro';
-import { href, results, teams, upcoming } from '../lib/data';
+import { groupByWeek, href, results, teams, upcoming } from '../lib/data';
+import { formatRange } from '../lib/format';
 
 const next = upcoming[0];
-const moreUpcoming = upcoming.slice(1, 9);
-const latest = results.slice(0, 8);
+const upcomingWeeks = groupByWeek(upcoming.slice(0, 12));
+const resultWeeks = groupByWeek(results.slice(0, 10));
 ---
 
 <Base title="Naslovnica">
@@ -19,12 +20,22 @@ const latest = results.slice(0, 8);
         <h2>Nadolazeće utakmice</h2>
         <a class="section-link" href={href('/utakmice')}>Sve utakmice</a>
       </div>
-      <MatchList matches={moreUpcoming} showTeam showCompetition empty="Nema daljnjih zakazanih utakmica." />
+      {
+        upcomingWeeks.map((w) => (
+          <MatchGroup title={formatRange([w.start, w.end])} matches={w.matches} showTeam showCompetition weekStart={w.start} weekEnd={w.end} />
+        ))
+      }
+      {upcomingWeeks.length === 0 && <p class="empty panel">Nema zakazanih utakmica.</p>}
     </section>
 
     <section class="section">
       <h2>Zadnji rezultati</h2>
-      <MatchList matches={latest} showTeam showCompetition empty="Još nema odigranih utakmica." />
+      {
+        resultWeeks.map((w) => (
+          <MatchGroup title={formatRange([w.start, w.end])} matches={w.matches} showTeam showCompetition weekStart={w.start} weekEnd={w.end} />
+        ))
+      }
+      {resultWeeks.length === 0 && <p class="empty panel">Još nema odigranih utakmica.</p>}
     </section>
 
     <aside class="section">

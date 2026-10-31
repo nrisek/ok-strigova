@@ -248,6 +248,15 @@ small {
   font-size: 1.1rem;
 }
 
+.page-head--team {
+  border-left: 6px solid var(--team, var(--navy));
+  padding-left: 16px;
+}
+
+.page-head--team h1 {
+  color: var(--team, var(--navy));
+}
+
 .meta-list {
   display: flex;
   flex-wrap: wrap;
@@ -413,16 +422,8 @@ small {
   border-bottom: 0;
 }
 
-.match--win {
-  border-left-color: var(--sun);
-}
-
-.match--loss {
-  border-left-color: var(--mist);
-}
-
-.match--upcoming {
-  border-left-color: var(--sky);
+.match--club {
+  border-left-color: var(--team, var(--navy));
 }
 
 .match__when {
@@ -461,7 +462,7 @@ small {
 
 .match__team.is-club {
   font-weight: 700;
-  color: var(--navy);
+  color: var(--team, var(--navy));
 }
 
 .match__free {
@@ -520,16 +521,16 @@ small {
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 0.95rem;
-  color: var(--navy);
-  background: var(--sun-tint);
+  color: var(--team, var(--navy));
+  background: color-mix(in srgb, var(--team, var(--navy)) 12%, var(--white));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--team, var(--navy)) 25%, var(--white));
   padding: 1px 8px 0;
   border-radius: 3px;
   text-decoration: none;
 }
 
 .chip:hover {
-  background: var(--sun);
-  color: var(--navy-deep);
+  background: color-mix(in srgb, var(--team, var(--navy)) 22%, var(--white));
 }
 
 @media (min-width: 720px) {
@@ -552,25 +553,75 @@ small {
   }
 }
 
-/* Kola i mjeseci */
+/* Kartice tjedana i kola */
 
-.round {
-  margin-top: 22px;
+.card {
+  background: var(--white);
+  border: 1px solid var(--mist);
+  border-radius: var(--radius);
+  overflow: hidden;
 }
 
-.round > h3 {
+.card + .card {
+  margin-top: 14px;
+}
+
+.card__head {
   display: flex;
-  justify-content: space-between;
-  gap: 12px;
   align-items: baseline;
-  margin-bottom: 8px;
-  padding-left: 2px;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  padding: 9px 16px 8px;
+  background: var(--mist-soft);
+  border-bottom: 1px solid var(--mist);
 }
 
-.round > h3 small {
-  font-family: var(--font-body);
-  font-weight: 400;
+.card__head h3 {
+  font-size: 1.2rem;
+}
+
+.card__head small {
+  margin-left: auto;
   color: var(--ink-soft);
+}
+
+.card__now {
+  display: none;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--navy-deep);
+  background: var(--sun);
+  padding: 1px 8px 0;
+  border-radius: 3px;
+  align-self: center;
+}
+
+.card.is-current {
+  border-color: var(--sun);
+  box-shadow: 0 0 0 3px var(--sun-tint);
+}
+
+.card.is-current .card__head {
+  background: var(--sun-tint);
+  border-bottom-color: var(--sun);
+}
+
+.card.is-current .card__now {
+  display: inline-block;
+}
+
+.card .matches {
+  border: 0;
+  border-radius: 0;
+}
+
+.card .empty {
+  margin: 0;
+}
+
+.section .card:first-of-type {
+  margin-top: 0;
 }
 
 /* Tablica poretka */
@@ -634,12 +685,16 @@ small {
 }
 
 .standings tr.is-club td {
-  background: var(--sun-tint);
+  background: color-mix(in srgb, var(--team, var(--navy)) 9%, var(--white));
   font-weight: 600;
 }
 
 .standings tr.is-club td:first-child {
-  box-shadow: inset 4px 0 0 var(--sun);
+  box-shadow: inset 4px 0 0 var(--team, var(--navy));
+}
+
+.standings tr.is-club .team {
+  color: var(--team, var(--navy));
 }
 
 @media (max-width: 600px) {
@@ -662,8 +717,13 @@ small {
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  padding: 14px 16px;
+  padding: 14px 16px 14px 14px;
   border-bottom: 1px solid var(--mist-soft);
+  border-left: 5px solid var(--team, var(--navy));
+}
+
+.team-summary h3 a {
+  color: var(--team, var(--navy));
 }
 
 .team-summary:last-child {
@@ -704,7 +764,7 @@ small {
   display: block;
   font-size: 2.4rem;
   font-weight: 700;
-  color: var(--navy);
+  color: var(--team, var(--navy));
 }
 
 .team-summary__rank-of {
@@ -750,6 +810,7 @@ small {
   margin-top: 40px;
 }
 
-.group .standings-wrap + .round {
-  margin-top: 26px;
+.group .standings-wrap + .card,
+.section .standings-wrap + .card {
+  margin-top: 22px;
 }

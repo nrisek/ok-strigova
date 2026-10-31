@@ -1,6 +1,6 @@
 ---
 import type { Competition, Team } from '@ok-strigova/scraper/model';
-import { competitionFor, competitionShortName, href, plural, standingOf, teamLabel } from '../lib/data';
+import { competitionFor, competitionShortName, href, plural, standingOf, teamColor, teamLabel } from '../lib/data';
 
 interface Props {
   team: Team;
@@ -12,7 +12,7 @@ const league = competitions.map((c) => ({ c, standing: standingOf(team, c) })).f
 const row = league?.standing?.row;
 ---
 
-<article class="team-summary">
+<article class="team-summary" style={`--team:${teamColor(team)}`}>
   <div class="team-summary__main">
     <h3><a href={href(`/ekipe/${team.slug}`)}>{teamLabel(team)}</a></h3>
     <p class="team-summary__comp">

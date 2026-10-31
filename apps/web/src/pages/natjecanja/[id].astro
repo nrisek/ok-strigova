@@ -1,9 +1,9 @@
 ---
 import type { Competition, Match } from '@ok-strigova/scraper/model';
 import Base from '../../layouts/Base.astro';
-import MatchList from '../../components/MatchList.astro';
+import MatchGroup from '../../components/MatchGroup.astro';
 import Standings from '../../components/Standings.astro';
-import { competitionShortName, competitions, matches } from '../../lib/data';
+import { addDays, competitionShortName, competitions, matches, weekStartOf } from '../../lib/data';
 import { formatRange } from '../../lib/format';
 
 export function getStaticPaths() {
@@ -45,15 +45,15 @@ function byRound(list: Match[]): { round: number | null; dates: string[]; matche
       return (
         <section class="section group">
           {name && <h2>Skupina {name}</h2>}
-          {group && <Standings group={group} caption={name ? undefined : 'Poredak'} />}
+          {group && <Standings competition={c} group={group} caption={name ? undefined : 'Poredak'} />}
           {byRound(list).map((r) => (
-            <div class="round">
-              <h3>
-                {r.round !== null ? `${r.round}. kolo` : 'Utakmice'}
-                {r.dates.length > 0 && <small>{formatRange(r.dates)}</small>}
-              </h3>
-              <MatchList matches={r.matches} />
-            </div>
+            <MatchGroup
+              title={r.round !== null ? `${r.round}. kolo` : 'Utakmice'}
+              subtitle={r.dates.length > 0 ? formatRange(r.dates) : null}
+              matches={r.matches}
+              weekStart={r.dates[0] ? weekStartOf(r.dates[0]) : undefined}
+              weekEnd={r.dates[0] ? addDays(weekStartOf(r.dates[0]), 6) : undefined}
+            />
           ))}
         </section>
       );
