@@ -329,10 +329,10 @@ small {
   font-family: var(--font-display);
   font-weight: 800;
   font-size: clamp(2.8rem, 10vw, 5rem);
-  line-height: 0.92;
+  line-height: 1;
   letter-spacing: 0.012em;
   display: grid;
-  gap: 6px;
+  gap: 0;
 }
 
 .next__teams .is-club {
@@ -340,8 +340,8 @@ small {
 }
 
 .next__teams span + span {
-  margin-top: 10px;
-  padding-top: 14px;
+  margin-top: 0.12em;
+  padding-top: 0.16em;
   border-top: 1px solid var(--line-strong);
 }
 
