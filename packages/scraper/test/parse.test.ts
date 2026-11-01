@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import type { Snapshot } from '../src/model';
 import { isClubTeam } from '../src/config';
 import { removeMirrors } from '../src/dedupe';
 import { findDates, parseDateTime, slugify, splitTitle } from '../src/parse/common';
@@ -206,5 +207,37 @@ describe('teams', () => {
     ]);
     expect(shortCategory('najmlađe kadetkinje U13')).toBe('U13');
     expect(shortCategory('seniorke')).toBe('seniorke');
+  });
+});
+
+describe('scrape with a failing detail page', () => {
+  it('keeps details from the previous snapshot when the page cannot be fetched', async () => {
+    const { scrape } = await import('../src/scrape');
+    const pages = new Map<string, string>([
+      ['https://osvz.hr/index.php', fixture('osvz-home-nav.html')],
+      ['https://osvz.hr/index.php?rubrika=utakmica&natjecanje=150', fixture('osvz-competition-150-tournament.html')],
+      ['https://osvz.hr/index.php?rubrika=ekipa&obrazac=1&id=94', fixture('osvz-team-94.html')],
+    ]);
+    const fetchImpl = (async (url: string | URL | Request) => {
+      const html = pages.get(String(url));
+      if (html) return new Response(html, { status: 200 });
+      // sve ostalo (druga natjecanja bez kluba, detalji utakmica) ne odgovara
+      if (String(url).includes('obrazac=1&id=')) throw new TypeError('fetch failed');
+      return new Response('<html><title>x | osvz.hr</title></html>', { status: 200 });
+    }) as unknown as typeof fetch;
+    const previous = {
+      teams: [],
+      matches: [{ id: 'osvz-4271', venue: 'Dvorana OŠ Lepoglava', referees: ['A B'], durationMinutes: 63, scheduledAt: '2026-09-27T12:00', sets: [] }],
+    } as unknown as Snapshot;
+    const snapshot = await scrape({
+      sites: [{ id: 'osvz', name: 'OSVŽ', baseUrl: 'https://osvz.hr' }],
+      fetchImpl,
+      delayMs: 0,
+      backoffMs: 0,
+      retries: 1,
+      previous,
+    });
+    const match = snapshot.matches.find((m) => m.id === 'osvz-4271');
+    expect(match).toMatchObject({ venue: 'Dvorana OŠ Lepoglava', referees: ['A B'], durationMinutes: 63, scheduledAt: '2026-09-27T12:00' });
   });
 });

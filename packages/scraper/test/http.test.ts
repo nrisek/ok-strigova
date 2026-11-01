@@ -13,7 +13,7 @@ describe('Client', () => {
       if (calls.length === 2) return response(502);
       return response(200);
     }) as unknown as typeof fetch;
-    const client = new Client({ delayMs: 0, retries: 5, fetchImpl });
+    const client = new Client({ delayMs: 0, retries: 5, backoffMs: 0, fetchImpl });
     // ubrzaj test: bez stvarnog čekanja između pokušaja
     const originalSetTimeout = globalThis.setTimeout;
     globalThis.setTimeout = ((fn: () => void) => originalSetTimeout(fn, 0)) as unknown as typeof setTimeout;
@@ -43,7 +43,7 @@ describe('Client', () => {
       calls++;
       throw new TypeError('fetch failed');
     }) as unknown as typeof fetch;
-    const client = new Client({ delayMs: 0, retries: 2, fetchImpl });
+    const client = new Client({ delayMs: 0, retries: 2, backoffMs: 0, fetchImpl });
     const originalSetTimeout = globalThis.setTimeout;
     globalThis.setTimeout = ((fn: () => void) => originalSetTimeout(fn, 0)) as unknown as typeof setTimeout;
     try {

@@ -22,7 +22,7 @@ export function isClubTeam(name: string): boolean {
 }
 
 export const USER_AGENT = 'ok-strigova-scraper/0.1 (+https://github.com/nrisek/ok-strigova)';
-export const REQUEST_DELAY_MS = 500;
+export const REQUEST_DELAY_MS = 800;
 
 export function competitionUrl(baseUrl: string, sourceId: number): string {
   return `${baseUrl}/index.php?rubrika=utakmica&natjecanje=${sourceId}`;

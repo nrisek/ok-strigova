@@ -11,6 +11,8 @@ export interface ClientOptions {
   retries?: number;
   /** Najdulje čekanje na odgovor jednog zahtjeva. */
   timeoutMs?: number;
+  /** Osnovni razmak između pokušaja; množi se rednim brojem pokušaja. */
+  backoffMs?: number;
   log?: (msg: string) => void;
   /** Zamjena za globalni fetch (testovi). */
   fetchImpl?: typeof fetch;
@@ -39,6 +41,7 @@ export class Client {
   private readonly cacheDir: string | null;
   private readonly retries: number;
   private readonly timeoutMs: number;
+  private readonly backoffMs: number;
   private readonly log: (msg: string) => void;
   private readonly fetchImpl: typeof fetch;
   private lastRequestAt = 0;
@@ -49,6 +52,7 @@ export class Client {
     this.cacheDir = opts.cacheDir ?? null;
     this.retries = opts.retries ?? 5;
     this.timeoutMs = opts.timeoutMs ?? 20_000;
+    this.backoffMs = opts.backoffMs ?? 6_000;
     this.log = opts.log ?? (() => {});
     this.fetchImpl = opts.fetchImpl ?? fetch;
   }
@@ -76,7 +80,7 @@ export class Client {
         if (err instanceof FetchError && !err.retryable) throw err;
         lastError = err;
         this.log(`  pokušaj ${attempt}/${this.retries} nije uspio: ${describe(err)}`);
-        if (attempt < this.retries) await sleep(2000 * attempt);
+        if (attempt < this.retries) await sleep(this.backoffMs * attempt);
       }
     }
     throw new FetchError(url, `nije uspjelo nakon ${this.retries} pokušaja: ${describe(lastError)}`, true);

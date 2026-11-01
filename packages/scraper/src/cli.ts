@@ -1,4 +1,5 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import type { Snapshot } from './model';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { scrape } from './scrape';
@@ -13,7 +14,15 @@ const getArg = (name: string): string | undefined => {
 const out = resolve(getArg('out') ?? resolve(here, '../../../data/snapshot.json'));
 const useCache = args.has('--cache');
 
+let previous: Snapshot | null = null;
+try {
+  previous = JSON.parse(await readFile(out, 'utf8')) as Snapshot;
+} catch {
+  previous = null;
+}
+
 const snapshot = await scrape({
+  previous,
   cacheDir: useCache ? resolve(here, '../.cache') : null,
   matchDetails: !args.has('--no-details'),
   delayMs: getArg('delay') ? Number(getArg('delay')) : undefined,

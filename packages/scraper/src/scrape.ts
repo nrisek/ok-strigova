@@ -13,6 +13,12 @@ export interface ScrapeOptions extends ClientOptions {
   sites?: SiteConfig[];
   /** Dohvati i stranice pojedinih utakmica kluba (dvorana, suci, trajanje). */
   matchDetails?: boolean;
+  /**
+   * Prethodni snapshot. Kad dopunska stranica (ekipa, detalji utakmice) ne uspije,
+   * zadržavaju se njezini stari podaci umjesto praznih polja, pa prolazni prekid
+   * veze ne mijenja podatke.
+   */
+  previous?: Snapshot | null;
 }
 
 /** Cijeli postupak: izbornik → natjecanja → ekipe kluba → detalji utakmica kluba → dedup. */
@@ -20,6 +26,8 @@ export async function scrape(opts: ScrapeOptions = {}): Promise<Snapshot> {
   const log = opts.log ?? (() => {});
   const client = new Client(opts);
   const sites = opts.sites ?? SITES;
+  const previousTeams = new Map((opts.previous?.teams ?? []).map((t) => [t.id, t]));
+  const previousMatches = new Map((opts.previous?.matches ?? []).map((m) => [m.id, m]));
 
   skipped.length = 0;
   const sources: SiteSource[] = [];
@@ -63,7 +71,8 @@ export async function scrape(opts: ScrapeOptions = {}): Promise<Snapshot> {
       const url = teamUrl(site.baseUrl, sourceId);
       // Stranica ekipe je samo dopuna (dvorana, kontakt); bez nje ekipu i dalje znamo iz tablice.
       const info = await optional(() => client.get(url).then(parseTeamPage), url, log);
-      const name = info?.name ?? nameFromStandings(competitions, site.id, sourceId) ?? `${site.id}-${sourceId}`;
+      const old = info ? undefined : previousTeams.get(`${site.id}-${sourceId}`);
+      const name = info?.name ?? old?.name ?? nameFromStandings(competitions, site.id, sourceId) ?? `${site.id}-${sourceId}`;
       teams.push({
         id: `${site.id}-${sourceId}`,
         site: site.id,
@@ -71,11 +80,11 @@ export async function scrape(opts: ScrapeOptions = {}): Promise<Snapshot> {
         url,
         slug: slugify(name),
         name,
-        club: info?.club ?? null,
-        hall: info?.hall ?? null,
-        category: info?.category ?? categoryFromStandings(competitions, site.id, sourceId),
-        gender: info?.gender ?? null,
-        contact: info?.contact ?? null,
+        club: info?.club ?? old?.club ?? null,
+        hall: info?.hall ?? old?.hall ?? null,
+        category: info?.category ?? old?.category ?? categoryFromStandings(competitions, site.id, sourceId),
+        gender: info?.gender ?? old?.gender ?? null,
+        contact: info?.contact ?? old?.contact ?? null,
         competitionIds: [...competitionIds],
       });
     }
@@ -94,7 +103,18 @@ export async function scrape(opts: ScrapeOptions = {}): Promise<Snapshot> {
       const url = matchUrl(site.baseUrl, match.sourceId);
       // Detalji su dopuna (dvorana, suci); bez njih utakmica ostaje kakva je na stranici natjecanja.
       const detail = await optional(() => client.get(url).then(parseMatchPage), url, log);
-      if (!detail) continue;
+      if (!detail) {
+        const old = previousMatches.get(match.id);
+        if (old) {
+          match.venue = old.venue;
+          match.referees = old.referees;
+          match.durationMinutes = old.durationMinutes;
+          match.scheduledAt = match.scheduledAt ?? old.scheduledAt;
+          if (match.sets.length === 0) match.sets = old.sets;
+          log(`  zadržani prethodni detalji za ${match.id}`);
+        }
+        continue;
+      }
       match.venue = detail.venue ?? match.venue;
       match.referees = detail.referees;
       match.durationMinutes = detail.durationMinutes;

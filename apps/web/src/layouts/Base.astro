@@ -73,7 +73,7 @@ const isCurrent = (path: string): boolean => (path === '/' ? current === href('/
               {s.lastChange && ` (zadnja promjena ${s.lastChange})`}
             </>
           ))}.
-          Osvježeno {formatStamp(snapshot.generatedAt)}.
+          Zadnja promjena podataka {formatStamp(snapshot.generatedAt)}; provjera 4 puta dnevno.
         </p>
         <p>
           <a href={href('/kalendar.ics')}>Kalendar svih utakmica (iCal)</a> za pretplatu u Google kalendaru ili na mobitelu.
