@@ -21,6 +21,7 @@ export async function scrape(opts: ScrapeOptions = {}): Promise<Snapshot> {
   const client = new Client(opts);
   const sites = opts.sites ?? SITES;
 
+  skipped.length = 0;
   const sources: SiteSource[] = [];
   let competitions: Competition[] = [];
   let matches: Match[] = [];
@@ -59,14 +60,22 @@ export async function scrape(opts: ScrapeOptions = {}): Promise<Snapshot> {
     }
 
     for (const [sourceId, competitionIds] of teamIds) {
-      const info = parseTeamPage(await client.get(teamUrl(site.baseUrl, sourceId)));
+      const url = teamUrl(site.baseUrl, sourceId);
+      // Stranica ekipe je samo dopuna (dvorana, kontakt); bez nje ekipu i dalje znamo iz tablice.
+      const info = await optional(() => client.get(url).then(parseTeamPage), url, log);
+      const name = info?.name ?? nameFromStandings(competitions, site.id, sourceId) ?? `${site.id}-${sourceId}`;
       teams.push({
         id: `${site.id}-${sourceId}`,
         site: site.id,
         sourceId,
-        url: teamUrl(site.baseUrl, sourceId),
-        slug: slugify(info.name),
-        ...info,
+        url,
+        slug: slugify(name),
+        name,
+        club: info?.club ?? null,
+        hall: info?.hall ?? null,
+        category: info?.category ?? categoryFromStandings(competitions, site.id, sourceId),
+        gender: info?.gender ?? null,
+        contact: info?.contact ?? null,
         competitionIds: [...competitionIds],
       });
     }
@@ -82,7 +91,10 @@ export async function scrape(opts: ScrapeOptions = {}): Promise<Snapshot> {
     for (const match of matches) {
       if (match.clubTeams.length === 0 || match.status === 'bye' || match.status === 'tbd') continue;
       const site = siteById.get(match.site)!;
-      const detail = parseMatchPage(await client.get(matchUrl(site.baseUrl, match.sourceId)));
+      const url = matchUrl(site.baseUrl, match.sourceId);
+      // Detalji su dopuna (dvorana, suci); bez njih utakmica ostaje kakva je na stranici natjecanja.
+      const detail = await optional(() => client.get(url).then(parseMatchPage), url, log);
+      if (!detail) continue;
       match.venue = detail.venue ?? match.venue;
       match.referees = detail.referees;
       match.durationMinutes = detail.durationMinutes;
@@ -93,7 +105,7 @@ export async function scrape(opts: ScrapeOptions = {}): Promise<Snapshot> {
 
   const finalTeams = finalizeTeams(teams, competitions);
   matches.sort(compareMatches);
-  log(`ukupno ${client.requests} HTTP zahtjeva`);
+  log(`ukupno ${client.requests} HTTP zahtjeva${skipped.length ? `, ${skipped.length} stranica preskočeno` : ''}`);
 
   return {
     generatedAt: new Date().toISOString(),
@@ -104,6 +116,35 @@ export async function scrape(opts: ScrapeOptions = {}): Promise<Snapshot> {
     teams: finalTeams,
     matches,
   };
+}
+
+const skipped: string[] = [];
+
+/** Pokuša dohvatiti dopunsku stranicu; kad ne uspije, zabilježi i vrati null umjesto rušenja cijelog prolaza. */
+async function optional<T>(run: () => Promise<T>, url: string, log: (m: string) => void): Promise<T | null> {
+  try {
+    return await run();
+  } catch (err) {
+    skipped.push(url);
+    log(`UPOZORENJE: preskačem ${url}: ${err instanceof Error ? err.message : String(err)}`);
+    return null;
+  }
+}
+
+function nameFromStandings(competitions: Competition[], site: string, teamSourceId: number): string | null {
+  for (const c of competitions) {
+    if (c.site !== site) continue;
+    const row = c.groups.flatMap((g) => g.standings).find((r) => r.teamSourceId === teamSourceId);
+    if (row) return row.team;
+  }
+  return null;
+}
+
+function categoryFromStandings(competitions: Competition[], site: string, teamSourceId: number): string | null {
+  const c = competitions.find(
+    (x) => x.site === site && x.groups.some((g) => g.standings.some((r) => r.teamSourceId === teamSourceId)),
+  );
+  return c?.category ?? null;
 }
 
 function compareMatches(a: Match, b: Match): number {

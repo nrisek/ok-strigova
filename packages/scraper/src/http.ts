@@ -7,26 +7,50 @@ export interface ClientOptions {
   delayMs?: number;
   /** Direktorij za keširanje sirovog HTML-a (samo za razvoj; nema isteka). */
   cacheDir?: string | null;
+  /** Broj pokušaja po zahtjevu prije odustajanja. */
   retries?: number;
+  /** Najdulje čekanje na odgovor jednog zahtjeva. */
+  timeoutMs?: number;
   log?: (msg: string) => void;
+  /** Zamjena za globalni fetch (testovi). */
+  fetchImpl?: typeof fetch;
 }
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 
-/** HTTP klijent s razmakom između zahtjeva, ponavljanjem i opcionalnim diskovnim kešom. */
+export class FetchError extends Error {
+  constructor(
+    public readonly url: string,
+    message: string,
+    public readonly retryable: boolean,
+  ) {
+    super(`${message} (${url})`);
+    this.name = 'FetchError';
+  }
+}
+
+/**
+ * HTTP klijent s razmakom između zahtjeva, ponavljanjem uz rastući razmak, timeoutom
+ * i opcionalnim diskovnim kešom. Stranice saveza povremeno ne odgovore ili prekinu
+ * vezu, pa je ponavljanje nužno.
+ */
 export class Client {
   private readonly delayMs: number;
   private readonly cacheDir: string | null;
   private readonly retries: number;
+  private readonly timeoutMs: number;
   private readonly log: (msg: string) => void;
+  private readonly fetchImpl: typeof fetch;
   private lastRequestAt = 0;
   requests = 0;
 
   constructor(opts: ClientOptions = {}) {
     this.delayMs = opts.delayMs ?? REQUEST_DELAY_MS;
     this.cacheDir = opts.cacheDir ?? null;
-    this.retries = opts.retries ?? 3;
+    this.retries = opts.retries ?? 5;
+    this.timeoutMs = opts.timeoutMs ?? 20_000;
     this.log = opts.log ?? (() => {});
+    this.fetchImpl = opts.fetchImpl ?? fetch;
   }
 
   async get(url: string): Promise<string> {
@@ -39,20 +63,23 @@ export class Client {
       try {
         this.requests++;
         this.log(`GET ${url}`);
-        const res = await fetch(url, { headers: { 'User-Agent': USER_AGENT, Accept: 'text/html' } });
-        if (res.status >= 500) throw new Error(`HTTP ${res.status}`);
-        if (!res.ok) throw new NonRetryableError(`HTTP ${res.status} for ${url}`);
+        const res = await this.fetchImpl(url, {
+          headers: { 'User-Agent': USER_AGENT, Accept: 'text/html' },
+          signal: AbortSignal.timeout(this.timeoutMs),
+        });
+        if (res.status >= 500 || res.status === 429) throw new Error(`HTTP ${res.status}`);
+        if (!res.ok) throw new FetchError(url, `HTTP ${res.status}`, false);
         const html = await res.text();
         await this.writeCache(url, html);
         return html;
       } catch (err) {
-        if (err instanceof NonRetryableError) throw err;
+        if (err instanceof FetchError && !err.retryable) throw err;
         lastError = err;
-        this.log(`  attempt ${attempt} failed: ${String(err)}`);
-        await sleep(1000 * attempt);
+        this.log(`  pokušaj ${attempt}/${this.retries} nije uspio: ${describe(err)}`);
+        if (attempt < this.retries) await sleep(2000 * attempt);
       }
     }
-    throw new Error(`Failed to fetch ${url}: ${String(lastError)}`);
+    throw new FetchError(url, `nije uspjelo nakon ${this.retries} pokušaja: ${describe(lastError)}`, true);
   }
 
   private async throttle(): Promise<void> {
@@ -84,4 +111,10 @@ export class Client {
   }
 }
 
-class NonRetryableError extends Error {}
+function describe(err: unknown): string {
+  if (err instanceof Error) {
+    const cause = (err as Error & { cause?: unknown }).cause;
+    return cause instanceof Error ? `${err.message} (${cause.message})` : err.message;
+  }
+  return String(err);
+}
