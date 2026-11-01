@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-31T07:09:00.955Z",
+  "generatedAt": "2026-11-01T07:08:52.040Z",
   "club": {
     "name": "OK Štrigova"
   },
@@ -993,6 +993,50 @@
       "clubTeams": []
     },
     {
+      "id": "osmz-232",
+      "site": "osmz",
+      "sourceId": 232,
+      "url": "https://www.osmz.hr/index.php?rubrika=utakmica&obrazac=1&id=232",
+      "competitionId": "osmz-22",
+      "group": null,
+      "round": 1,
+      "roundDates": [
+        "2026-10-03",
+        "2026-10-04"
+      ],
+      "number": 5,
+      "home": "OK Štrigova 2",
+      "away": "OK Plavi 4",
+      "status": "played",
+      "result": {
+        "home": 3,
+        "away": 0
+      },
+      "sets": [
+        {
+          "home": 25,
+          "away": 23
+        },
+        {
+          "home": 25,
+          "away": 19
+        },
+        {
+          "home": 25,
+          "away": 19
+        }
+      ],
+      "winner": "home",
+      "scheduledAt": null,
+      "venue": null,
+      "referees": [],
+      "durationMinutes": null,
+      "note": null,
+      "clubTeams": [
+        "OK Štrigova 2"
+      ]
+    },
+    {
       "id": "osmz-233",
       "site": "osmz",
       "sourceId": 233,
@@ -1336,50 +1380,6 @@
       "note": null,
       "clubTeams": [
         "OK Štrigova 3"
-      ]
-    },
-    {
-      "id": "osmz-232",
-      "site": "osmz",
-      "sourceId": 232,
-      "url": "https://www.osmz.hr/index.php?rubrika=utakmica&obrazac=1&id=232",
-      "competitionId": "osmz-22",
-      "group": null,
-      "round": 1,
-      "roundDates": [
-        "2026-10-03",
-        "2026-10-04"
-      ],
-      "number": 5,
-      "home": "OK Štrigova 2",
-      "away": "OK Plavi 4",
-      "status": "played",
-      "result": {
-        "home": 3,
-        "away": 0
-      },
-      "sets": [
-        {
-          "home": 25,
-          "away": 23
-        },
-        {
-          "home": 25,
-          "away": 19
-        },
-        {
-          "home": 25,
-          "away": 19
-        }
-      ],
-      "winner": "home",
-      "scheduledAt": "2026-10-03T15:30",
-      "venue": "OŠ Štrigova",
-      "referees": [],
-      "durationMinutes": null,
-      "note": null,
-      "clubTeams": [
-        "OK Štrigova 2"
       ]
     },
     {
