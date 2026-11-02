@@ -57,4 +57,19 @@ const heroDates = firstWeek ? matchDatesOf(firstWeek.matches) : [];
     </header>
     <div class="team-grid">{teams.map((team) => <TeamSummary team={team} />)}</div>
   </section>
+
+  <section class="week">
+    <div class="link-grid">
+      <a class="link-card" href={href('/uprava')}>
+        <span class="label">Klub</span>
+        <span class="link-card__title">Uprava</span>
+        <span class="link-card__text">Tko vodi klub, stručni stožer i nadzorni odbor.</span>
+      </a>
+      <a class="link-card" href={href('/sponzori')}>
+        <span class="label">Partneri</span>
+        <span class="link-card__title">Sponzori</span>
+        <span class="link-card__text">Tko podržava klub i što je točno podržao.</span>
+      </a>
+    </div>
+  </section>
 </Base>

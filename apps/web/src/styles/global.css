@@ -791,3 +791,339 @@ h2 a:hover {
     letter-spacing: 0.08em;
   }
 }
+
+/* Napomena o demo podacima */
+
+.demo-note {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 6px 12px;
+  border: 1px dashed var(--orange);
+  border-radius: 6px;
+  color: var(--orange) !important;
+  font-size: 0.88rem !important;
+}
+
+.week__desc {
+  color: var(--on-navy-soft);
+  margin-top: 8px;
+  max-width: 60ch;
+}
+
+/* Organizacijska shema */
+
+.org {
+  display: grid;
+  gap: 0;
+}
+
+.org__level {
+  position: relative;
+  padding-top: 34px;
+  text-align: center;
+}
+
+.org__level:first-child {
+  padding-top: 0;
+}
+
+.org__level + .org__level::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 24px;
+  background: var(--orange);
+  transform: translateX(-50%);
+}
+
+.org__title {
+  margin-bottom: 12px;
+}
+
+.org__people {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.org__people--grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  justify-content: start;
+}
+
+.person {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 4px;
+  width: min(100%, 230px);
+  background: var(--cream);
+  color: var(--ink);
+  border-radius: var(--radius);
+  padding: 20px 16px 18px;
+}
+
+.org__people--grid .person {
+  width: auto;
+}
+
+.person--lead {
+  width: min(100%, 280px);
+  border-top: 6px solid var(--orange);
+}
+
+.person__photo {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--cream-2);
+  margin-bottom: 8px;
+}
+
+.person--lead .person__photo {
+  width: 120px;
+  height: 120px;
+}
+
+.person__role {
+  font-family: var(--font-sport);
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--orange-deep);
+}
+
+.person__name {
+  font-family: var(--font-sport);
+  font-weight: 600;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.person--lead .person__name {
+  font-size: 1.45rem;
+}
+
+.person__contact {
+  display: grid;
+  gap: 2px;
+  margin-top: 6px;
+  font-size: 0.85rem;
+}
+
+.person__contact a {
+  color: var(--ink-soft);
+  text-decoration-color: var(--cream-3);
+}
+
+.person__contact a:hover {
+  color: var(--orange-deep);
+}
+
+/* Sponzori */
+
+.sponsors {
+  display: grid;
+  gap: 12px;
+}
+
+@media (min-width: 720px) {
+  .sponsors--zlatni {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .sponsors--srebrni,
+  .sponsors--broncani,
+  .sponsors--prijatelji {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+.sponsor {
+  background: var(--cream);
+  color: var(--ink);
+  border-radius: var(--radius);
+  padding: 18px 18px 16px;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.sponsors--zlatni .sponsor {
+  border-top: 6px solid var(--orange);
+}
+
+.sponsor__head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.sponsor__mark,
+.sponsor__logo {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.sponsor__mark {
+  display: grid;
+  place-items: center;
+  background: var(--navy);
+  color: var(--cream);
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  letter-spacing: 0.04em;
+}
+
+.sponsors--prijatelji .sponsor__mark {
+  background: var(--cream-3);
+  color: var(--ink);
+}
+
+.sponsor__name {
+  font-family: var(--font-sport);
+  font-weight: 600;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.sponsor__name a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.sponsor__name a:hover {
+  color: var(--orange-deep);
+  text-decoration: underline;
+}
+
+.sponsor__since {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  margin-top: 2px;
+}
+
+.sponsor__list {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--cream-3);
+}
+
+.sponsor__list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--cream-3);
+  font-size: 0.95rem;
+}
+
+.sponsor__season {
+  flex-shrink: 0;
+  font-family: var(--font-sport);
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+}
+
+/* Poziv i kartice-poveznice */
+
+.cta {
+  background: var(--orange);
+  color: var(--navy);
+  border-radius: var(--radius);
+  padding: 26px 24px 28px;
+}
+
+.cta .label,
+.cta h2 {
+  color: var(--navy);
+}
+
+.cta h2 {
+  margin: 6px 0 10px;
+}
+
+.cta p:not(.label) {
+  max-width: 60ch;
+}
+
+.cta a {
+  color: var(--navy);
+  font-weight: 600;
+}
+
+.link-grid {
+  display: grid;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .link-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.link-card {
+  display: grid;
+  gap: 4px;
+  background: var(--cream);
+  color: var(--ink);
+  border-radius: var(--radius);
+  padding: 20px 20px 18px;
+  text-decoration: none;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.link-card:hover {
+  color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.6);
+}
+
+.link-card__title {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.link-card__text {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+/* Navigacija sa šest stavki na uskim ekranima */
+
+@media (max-width: 640px) {
+  .site-nav {
+    margin-left: 0;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0 6px;
+  }
+
+  .site-nav a {
+    padding: 6px 4px 5px;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+  }
+}
+
+.org + .week {
+  margin-top: 56px;
+}

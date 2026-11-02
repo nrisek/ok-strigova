@@ -36,6 +36,18 @@ Scraper čita tri vrste stranica saveza:
 Detalji utakmica dohvaćaju se samo za utakmice ekipa kluba. Jedan puni prolaz je oko 35 HTTP zahtjeva s
 razmakom od pola sekunde, s jasnim `User-Agent` zaglavljem.
 
+## Sadržaj kluba (uprava, sponzori)
+
+Stranice **Uprava** i **Sponzori** ne dolaze sa stranica saveza nego iz datoteka u repozitoriju:
+
+- `apps/web/src/content/uprava.json`: hijerarhija (`chart`, razine odozgo prema dolje) i ostala tijela (`groups`).
+  Osoba ima `name`, `role`, opcionalno `email`, `phone` i `photo` (putanja u `apps/web/public/`); bez fotografije
+  prikazuje se `avatar.svg`.
+- `apps/web/src/content/sponzori.json`: razine sponzora (`tiers`) i za svakog sponzora popis što je podržao
+  (`contributions`: `what`, `season`), opcionalno `website`, `since` i `logo`.
+
+Trenutno su to demo podaci (označeno i na stranicama); zamjena pravima je samo uređivanje tih dviju datoteka.
+
 ## Razvoj
 
 Potreban je Node 22.12+ i pnpm (`corepack enable`).

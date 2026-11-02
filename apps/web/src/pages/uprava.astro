@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+import PersonCard from '../components/PersonCard.astro';
+import { management } from '../lib/club';
+---
+
+<Base title="Uprava" description="Uprava, upravni odbor, stručni stožer i nadzorni odbor OK Štrigova.">
+  <div class="page-head">
+    <p class="label">Klub</p>
+    <h1>Uprava</h1>
+    <p>Tko vodi klub i kome se javiti. Hijerarhija ide odozgo prema dolje.</p>
+    {management.note && <p class="demo-note">{management.note}</p>}
+  </div>
+
+  <section class="org" aria-label="Organizacijska shema">
+    {
+      management.chart.map((level, i) => (
+        <div class="org__level">
+          <p class="org__title label">{level.title}</p>
+          <ul class="org__people">
+            {level.people.map((person) => (
+              <PersonCard person={person} lead={i === 0} />
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </section>
+
+  {
+    management.groups.map((group) => (
+      <section class="week">
+        <header class="week__head">
+          <div>
+            <p class="label">Tijelo kluba</p>
+            <h2>{group.title}</h2>
+            {group.description && <p class="week__desc">{group.description}</p>}
+          </div>
+        </header>
+        <ul class="org__people org__people--grid">
+          {group.people.map((person) => (
+            <PersonCard person={person} />
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</Base>

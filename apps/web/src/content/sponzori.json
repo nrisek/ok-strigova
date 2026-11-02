@@ -1,0 +1,100 @@
+{
+  "note": "Demo podaci: sponzori, iznosi i donacije su izmišljeni i služe samo za prikaz.",
+  "contactEmail": "sponzori@okstrigova.hr",
+  "tiers": [
+    {
+      "id": "zlatni",
+      "title": "Zlatni sponzori",
+      "description": "Glavni partneri kluba u sezoni 2026/27.",
+      "sponsors": [
+        {
+          "name": "Vinarija Primjer",
+          "initials": "VP",
+          "website": "https://example.com",
+          "since": 2021,
+          "contributions": [
+            { "what": "Dresovi seniorki", "season": "2026/27" },
+            { "what": "Glavni sponzor memorijalnog turnira", "season": "2026/27" },
+            { "what": "Dresovi seniorki", "season": "2025/26" }
+          ]
+        },
+        {
+          "name": "Građevinarstvo Uzorak d.o.o.",
+          "initials": "GU",
+          "website": "https://example.com",
+          "since": 2023,
+          "contributions": [
+            { "what": "Prijevoz na gostovanja", "season": "2026/27" },
+            { "what": "Obnova podloge u dvorani", "season": "2025/26" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "srebrni",
+      "title": "Srebrni sponzori",
+      "description": "Partneri koji podržavaju pojedine ekipe ili programe.",
+      "sponsors": [
+        {
+          "name": "Pekara Kifla",
+          "initials": "PK",
+          "since": 2024,
+          "contributions": [
+            { "what": "Obroci na domaćim turnirima", "season": "2026/27" },
+            { "what": "Oprema za mlađe kategorije (U13)", "season": "2026/27" }
+          ]
+        },
+        {
+          "name": "Autoservis Brzi",
+          "initials": "AB",
+          "website": "https://example.com",
+          "since": 2025,
+          "contributions": [{ "what": "Lopte i mreže", "season": "2026/27" }]
+        },
+        {
+          "name": "Kafić Mreža",
+          "initials": "KM",
+          "since": 2022,
+          "contributions": [
+            { "what": "Trenirke za Štrigova 2 i 3", "season": "2026/27" },
+            { "what": "Pokroviteljstvo božićnog turnira", "season": "2025/26" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "broncani",
+      "title": "Brončani sponzori",
+      "description": "Lokalni obrti i tvrtke koji pomažu opremom i uslugama.",
+      "sponsors": [
+        {
+          "name": "Cvjećarnica Latica",
+          "initials": "CL",
+          "since": 2026,
+          "contributions": [{ "what": "Cvijeće za svečanosti kluba", "season": "2026/27" }]
+        },
+        {
+          "name": "Fotostudio Kadar",
+          "initials": "FK",
+          "since": 2026,
+          "contributions": [{ "what": "Fotografiranje ekipa", "season": "2026/27" }]
+        },
+        {
+          "name": "Tiskara Slovo",
+          "initials": "TS",
+          "since": 2024,
+          "contributions": [{ "what": "Plakati i najave utakmica", "season": "2026/27" }]
+        }
+      ]
+    },
+    {
+      "id": "prijatelji",
+      "title": "Prijatelji kluba",
+      "description": "Pojedinci i obitelji koji pomažu donacijama.",
+      "sponsors": [
+        { "name": "Obitelj Horvat", "initials": "OH", "since": 2020, "contributions": [{ "what": "Donacija za kamp mlađih kategorija", "season": "2026/27" }] },
+        { "name": "Obitelj Novak", "initials": "ON", "since": 2023, "contributions": [{ "what": "Donacija za opremu", "season": "2025/26" }] }
+      ]
+    }
+  ]
+}

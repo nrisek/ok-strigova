@@ -1,0 +1,27 @@
+---
+import type { Person } from '../lib/club';
+import { href } from '../lib/data';
+
+interface Props {
+  person: Person;
+  /** Veća kartica za vrh hijerarhije. */
+  lead?: boolean;
+}
+
+const { person, lead = false } = Astro.props;
+const photo = href(person.photo ?? '/avatar.svg');
+---
+
+<li class:list={['person', { 'person--lead': lead }]}>
+  <img class="person__photo" src={photo} alt="" width="96" height="96" loading="lazy" />
+  <p class="person__role">{person.role}</p>
+  <p class="person__name">{person.name}</p>
+  {
+    (person.email || person.phone) && (
+      <p class="person__contact">
+        {person.email && <a href={`mailto:${person.email}`}>{person.email}</a>}
+        {person.phone && <a href={`tel:${person.phone.replace(/\s+/g, '')}`}>{person.phone}</a>}
+      </p>
+    )
+  }
+</li>

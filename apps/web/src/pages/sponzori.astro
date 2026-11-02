@@ -1,0 +1,72 @@
+---
+import Base from '../layouts/Base.astro';
+import { sponsors } from '../lib/club';
+import { href } from '../lib/data';
+
+const total = sponsors.tiers.reduce((n, t) => n + t.sponsors.length, 0);
+---
+
+<Base title="Sponzori" description="Sponzori i partneri OK Štrigova i što su podržali.">
+  <div class="page-head">
+    <p class="label">Partneri</p>
+    <h1>Sponzori</h1>
+    <p>Klub ove sezone podržava {total} sponzora i prijatelja. Hvala svima; uz svakog piše što je točno podržao.</p>
+    {sponsors.note && <p class="demo-note">{sponsors.note}</p>}
+  </div>
+
+  {
+    sponsors.tiers.map((tier) => (
+      <section class="week" id={tier.id}>
+        <header class="week__head">
+          <div>
+            <p class="label">{tier.sponsors.length === 1 ? '1 partner' : `${tier.sponsors.length} partnera`}</p>
+            <h2>{tier.title}</h2>
+            {tier.description && <p class="week__desc">{tier.description}</p>}
+          </div>
+        </header>
+        <ul class:list={['sponsors', `sponsors--${tier.id}`]}>
+          {tier.sponsors.map((s) => (
+            <li class="sponsor">
+              <div class="sponsor__head">
+                {s.logo ? (
+                  <img class="sponsor__logo" src={href(s.logo)} alt="" width="64" height="64" loading="lazy" />
+                ) : (
+                  <span class="sponsor__mark" aria-hidden="true">
+                    {s.initials}
+                  </span>
+                )}
+                <div>
+                  <p class="sponsor__name">{s.website ? <a href={s.website} rel="noopener">{s.name}</a> : s.name}</p>
+                  {s.since && <p class="sponsor__since">uz klub od {s.since}.</p>}
+                </div>
+              </div>
+              <ul class="sponsor__list">
+                {s.contributions.map((c) => (
+                  <li>
+                    <span>{c.what}</span>
+                    <span class="sponsor__season num">{c.season}</span>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+
+  {
+    sponsors.contactEmail && (
+      <section class="week">
+        <div class="cta">
+          <p class="label">Postanite partner</p>
+          <h2>Želite podržati klub?</h2>
+          <p>
+            Svaka pomoć, od dresova do prijevoza na gostovanja, vidljiva je ovdje i na našim utakmicama. Javite se na{' '}
+            <a href={`mailto:${sponsors.contactEmail}`}>{sponsors.contactEmail}</a>.
+          </p>
+        </div>
+      </section>
+    )
+  }
+</Base>

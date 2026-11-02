@@ -1,0 +1,49 @@
+{
+  "note": "Demo podaci: imena, funkcije, kontakti i fotografije su privremeni i zamijenit će se pravima.",
+  "chart": [
+    {
+      "title": "Predsjednik kluba",
+      "people": [
+        { "name": "Ivan Ivić", "role": "Predsjednik", "email": "predsjednik@okstrigova.hr", "phone": "+385 99 000 0001" }
+      ]
+    },
+    {
+      "title": "Uži odbor",
+      "people": [
+        { "name": "Ana Anić", "role": "Dopredsjednica", "email": "dopredsjednica@okstrigova.hr" },
+        { "name": "Marko Marić", "role": "Tajnik", "email": "tajnik@okstrigova.hr", "phone": "+385 99 000 0002" },
+        { "name": "Petra Perić", "role": "Blagajnica", "email": "blagajna@okstrigova.hr" }
+      ]
+    },
+    {
+      "title": "Upravni odbor",
+      "people": [
+        { "name": "Luka Lukić", "role": "Član upravnog odbora" },
+        { "name": "Maja Majić", "role": "Članica upravnog odbora" },
+        { "name": "Josip Josipović", "role": "Član upravnog odbora" },
+        { "name": "Iva Ivančić", "role": "Članica upravnog odbora" }
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "title": "Stručni stožer",
+      "description": "Treneri i stručna podrška ekipama.",
+      "people": [
+        { "name": "Tomislav Tomić", "role": "Glavni trener, seniorke" },
+        { "name": "Katarina Katić", "role": "Trenerica, OK Štrigova 2 i 3" },
+        { "name": "Filip Filipović", "role": "Trener mlađih kategorija" },
+        { "name": "Lucija Lučić", "role": "Fizioterapeutkinja" }
+      ]
+    },
+    {
+      "title": "Nadzorni odbor",
+      "description": "Nadzire financijsko i statutarno poslovanje kluba.",
+      "people": [
+        { "name": "Nikola Nikolić", "role": "Predsjednik nadzornog odbora" },
+        { "name": "Sara Sarić", "role": "Članica nadzornog odbora" },
+        { "name": "Dario Darić", "role": "Član nadzornog odbora" }
+      ]
+    }
+  ]
+}
