@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T22:16:03.253Z",
+  "generatedAt": "2026-11-04T22:31:02.039Z",
   "club": {
     "name": "OK Štrigova"
   },
@@ -14,7 +14,7 @@
       "id": "osmz",
       "name": "Odbojkaški savez Međimurske županije",
       "baseUrl": "https://www.osmz.hr",
-      "lastChange": "3. studenog 2026., 8,59"
+      "lastChange": "4. studenog 2026., 19,56"
     }
   ],
   "competitions": [
@@ -3980,34 +3980,6 @@
       "clubTeams": []
     },
     {
-      "id": "osmz-255",
-      "site": "osmz",
-      "sourceId": 255,
-      "url": "https://www.osmz.hr/index.php?rubrika=utakmica&obrazac=1&id=255",
-      "competitionId": "osmz-22",
-      "group": null,
-      "round": 5,
-      "roundDates": [
-        "2026-11-07",
-        "2026-11-08"
-      ],
-      "number": 28,
-      "home": "OK Nedelišće Elting 3",
-      "away": "OK Štrigova 3",
-      "status": "tbd",
-      "result": null,
-      "sets": [],
-      "winner": null,
-      "scheduledAt": null,
-      "venue": null,
-      "referees": [],
-      "durationMinutes": null,
-      "note": null,
-      "clubTeams": [
-        "OK Štrigova 3"
-      ]
-    },
-    {
       "id": "osvz-4484",
       "site": "osvz",
       "sourceId": 4484,
@@ -4192,6 +4164,34 @@
       "durationMinutes": null,
       "note": null,
       "clubTeams": []
+    },
+    {
+      "id": "osmz-255",
+      "site": "osmz",
+      "sourceId": 255,
+      "url": "https://www.osmz.hr/index.php?rubrika=utakmica&obrazac=1&id=255",
+      "competitionId": "osmz-22",
+      "group": null,
+      "round": 5,
+      "roundDates": [
+        "2026-11-07",
+        "2026-11-08"
+      ],
+      "number": 28,
+      "home": "OK Nedelišće Elting 3",
+      "away": "OK Štrigova 3",
+      "status": "scheduled",
+      "result": null,
+      "sets": [],
+      "winner": null,
+      "scheduledAt": "2026-11-08T15:00",
+      "venue": "Sport Hub Nedelišće",
+      "referees": [],
+      "durationMinutes": null,
+      "note": null,
+      "clubTeams": [
+        "OK Štrigova 3"
+      ]
     },
     {
       "id": "osmz-256",
