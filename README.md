@@ -22,7 +22,7 @@ prikazuje samo jednom.
 apps/web/           Astro site (statički build)
 packages/scraper/   TypeScript scraper: dohvat, parsiranje (cheerio), deduplikacija
 data/snapshot.json  generirani podaci; jedini ulaz u web aplikaciju
-.github/workflows/  CI, periodični scrape i deploy na GitHub Pages
+.github/workflows/  CI i deploy na GitHub Pages
 ```
 
 Scraper čita tri vrste stranica saveza:
@@ -73,8 +73,8 @@ prilagodite parsere u `packages/scraper/src/parse/`.
 
 ## Objava
 
-Workflow `Osvježi podatke` 4 puta dnevno pokreće scraper, zapisuje promjene u `data/` i objavljuje site.
-Workflow `Deploy` gradi site za GitHub Pages, ali tek kad se postave:
+Podaci se osvježavaju ručno: `pnpm scrape` zapiše novi `data/snapshot.json`, a commit i push na `main`
+pokreću workflow `Deploy`. On gradi site za GitHub Pages, ali tek kad se postave:
 
 1. Settings → Pages → Source: **GitHub Actions**
 2. Settings → Secrets and variables → Actions → Variables: `DEPLOY_PAGES` = `true`
